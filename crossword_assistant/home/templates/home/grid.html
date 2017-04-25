@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<link rel="stylesheet" href="bootstrap.min.css" type = "text/css"/>
+{% load staticfiles %}
+<link rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" type = "text/css"/>
 <meta name="viewport" content = "width=device-width, initial-scale=1.0">
 
   <style>
@@ -25,9 +26,9 @@
     width:560px;
   }
   </style>
-<script src="jquery.min.js"></script>
-<script src="bootstrap.min.js"></script>
-<script src="grid.js"></script>
+<script src="{% static 'home/js/jquery.min.js' %}"></script>
+<script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'home/js/grid.js' %}"></script>
 
 </head>
 <body class="body" style="background-color:#f6f6f6">
