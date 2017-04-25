@@ -9,3 +9,4 @@ class Clue(models.Model):
     clue_number = models.PositiveIntegerField()
     answer_length = models.PositiveIntegerField()
     across_down = models.PositiveIntegerField()
+    cell_number = models.PositiveIntegerField()
