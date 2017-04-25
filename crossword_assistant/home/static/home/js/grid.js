@@ -15,28 +15,28 @@ str =  `<div class='modal-dialog'>
             <!-- Modal Body -->
             <div class='modal-body'>
 
-                <form class='form-horizontal' role='form'>
+                <form class='form-horizontal' role='form' action='/clue' method='post'>
                   <div class='form-group'>
                     <label  class='col-sm-2 control-label'
                               for='clue'>Clue</label>
                     <div class='col-sm-10'>
-                        <input type='text' class='form-control'
+                        <input type='text' name='clue' class='form-control'
                         id='clue'/>
                     </div>
                   </div>
                   <div class='form-group'>
                     <label class='col-sm-2 control-label'
-                          for='cellno' >Cell No</label>
+                          for='clueno' >Clue No</label>
                     <div class='col-sm-10'>
-                        <input type='number' class='form-control'
-                            id='cellno'/>
+                        <input type='number' name='clueno' class='form-control'
+                            id='clueno'/>
                     </div>
                   </div>
                   <div class='form-group'>
                     <label class='col-sm-2 control-label'
                           for='length' >Length</label>
                     <div class='col-sm-10'>
-                        <input type='number' class='form-control'
+                        <input type='number' name='length' class='form-control'
                             id='length'/>
                     </div>
                   </div>
