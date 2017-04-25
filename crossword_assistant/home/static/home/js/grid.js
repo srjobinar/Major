@@ -76,10 +76,15 @@ $(document).ready(function() {
     for(j=0;j<16;j++){
      iDiv = document.createElement('div');
      mod = document.createElement('div');
+     numDiv = document.createElement('div');
      k = i*100 + j
      iDiv.id = ""+k;
-     iDiv.className = 'cell btn';
+     iDiv.className = 'cell';
      document.getElementById("abc").appendChild(iDiv);
+
+     numDiv.id="n"+k;
+     numDiv.className='cellNo';
+     iDiv.appendChild(numDiv);
 
      mod.className = "modal fade";
      mod.id = "m"+k;
