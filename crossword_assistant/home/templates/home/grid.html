@@ -30,8 +30,38 @@
 <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'home/js/grid.js' %}"></script>
 
+  <script type="text/javascript">
+  $(function(){
+
+{% for c in data %}
+    var k;
+    var cell={{c.cell_number}};
+    if({{c.across_down}}==1)
+          k=1;
+    else
+          k=100;
+    for(var i=0;i<{{c.answer_length}};i++)
+      {
+        $cell = $("#"+cell);
+        //console.log($cell);
+        //console.log($("#"+cell).css("background-color"));
+        $("#"+cell).css("background-color","#fff")
+        cell=cell+k; 
+        //console.log(cell);
+
+
+      }
+
+{% endfor %}
+
+  });
+  
+    
+  </script>
+
 </head>
-<body class="body" style="background-color:#f6f6f6">
+<body class="body" style="background-color:#ccc">
+
     <div id="abc" class="container" ></div>
     <div id="modal_container"></div>
 

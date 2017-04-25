@@ -16,6 +16,7 @@ str =  `<div class='modal-dialog'>
             <div class='modal-body'>
 
                 <form class='form-horizontal' role='form' action='/clue' method='post'>
+                  <input class="hidden" type="hidden" name="cell_num" value="0">
                   <div class='form-group'>
                     <label  class='col-sm-2 control-label'
                               for='clue'>Clue</label>
@@ -75,21 +76,31 @@ $(document).ready(function() {
     for(j=0;j<16;j++){
      iDiv = document.createElement('div');
      mod = document.createElement('div');
-     iDiv.id = ""+i+j;
+     k = i*100 + j
+     iDiv.id = ""+k;
      iDiv.className = 'cell btn';
      document.getElementById("abc").appendChild(iDiv);
 
      mod.className = "modal fade";
-     mod.id = "m"+i+j;
+     mod.id = "m"+k;
      document.getElementById("modal_container").appendChild(mod)
      //document.write(i);
-     $("#"+i+j).attr('data-target',"#m"+i+j);
-     $("#"+i+j).attr('data-toggle',"modal");
-     $("#m"+i+j).attr('tabindex',"-1");
-     $("#m"+i+j).attr('role',"dialog");
+     $("#"+k).attr('data-target',"#m"+k);
+     $("#"+k).attr('data-toggle',"modal");
+     $("#m"+k).attr('tabindex',"-1");
+     $("#m"+k).attr('role',"dialog");
 
      html = $.parseHTML(str);
-     $("#m"+i+j).append(html);
+     $("#m"+k).append(html);
+     u = $("#m"+k+' input.hidden');
+     u.val(k);
+     //document.write(u.val());
+     //.val(''+k);
+     //v = u.getElementByTagName("div");
+     // a = v.getElementByTagName("div")[0];
+     // b = a.getElementByTagName("div")[1];
+     // c = b.getElementByTagName("form")[0];
+     // w.attr('value',k);
 
    }
    //document.write("<br>");

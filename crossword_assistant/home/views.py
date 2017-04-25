@@ -1,19 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-
+from .models import Clue
 def index(request):
-    return render(request, 'home/grid.html')
+	data = Clue.objects.all()
+	return render(request,'home/grid.html',{'data':data})
 
 
 def clueinput(request):
-	clue = "No clue given"
-
 	if request.method == "POST":
 	#Get the posted form
 		clue = request.POST['clue']
 		clueno = request.POST['clueno']
 		length = request.POST['length']
 		direct = request.POST['type']
-	return render(request, 'home/clue.html', {"clue" : direct,"clueno" : clueno,"length" : length,"type" : direct})
+		cell_num = request.POST['cell_num']
+		query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num)
+		query.save()
+	return HttpResponseRedirect("/")
