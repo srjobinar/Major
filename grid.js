@@ -2,7 +2,7 @@ str =  `<div class='modal-dialog'>
         <div class='modal-content'>
             <!-- Modal Header -->
             <div class='modal-header'>
-                <button type='button' class='close' 
+                <button type='button' class='close'
                    data-dismiss='modal'>
                        <span aria-hidden='true'>&times;</span>
                        <span class='sr-only'>Close</span>
@@ -11,17 +11,25 @@ str =  `<div class='modal-dialog'>
                     Clue Info
                 </h4>
             </div>
-            
+
             <!-- Modal Body -->
             <div class='modal-body'>
-                
+
                 <form class='form-horizontal' role='form'>
                   <div class='form-group'>
                     <label  class='col-sm-2 control-label'
                               for='clue'>Clue</label>
                     <div class='col-sm-10'>
-                        <input type='text' class='form-control' 
+                        <input type='text' class='form-control'
                         id='clue'/>
+                    </div>
+                  </div>
+                  <div class='form-group'>
+                    <label class='col-sm-2 control-label'
+                          for='cellno' >Cell No</label>
+                    <div class='col-sm-10'>
+                        <input type='number' class='form-control'
+                            id='cellno'/>
                     </div>
                   </div>
                   <div class='form-group'>
@@ -51,8 +59,8 @@ str =  `<div class='modal-dialog'>
                       <button type='submit' class='btn btn-default'>Apply</button>
                     </div>
                   </div>
-                </form>    
-                
+                </form>
+
             </div>
         </div>
     </div>`;
@@ -79,7 +87,7 @@ $(document).ready(function() {
      $("#"+i+j).attr('data-toggle',"modal");
      $("#m"+i+j).attr('tabindex',"-1");
      $("#m"+i+j).attr('role',"dialog");
-     
+
      html = $.parseHTML(str);
      $("#m"+i+j).append(html);
 
