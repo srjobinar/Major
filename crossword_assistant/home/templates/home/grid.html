@@ -18,12 +18,20 @@
     height: 30px;
     width: 30px;
     background-color: #000;
+    cursor: pointer;
   }
   #abc
   {
 
     margin-top:100px;
     width:560px;
+  }
+  .cellNo
+  {
+    color: #000;
+    font-size: 9px;
+    margin-left:  2px;
+    margin-top: 0px;
   }
   </style>
 <script src="{% static 'home/js/jquery.min.js' %}"></script>
@@ -32,10 +40,11 @@
 
   <script type="text/javascript">
   $(function(){
+ {% for c in data %}
 
-{% for c in data %}
     var k;
     var cell={{c.cell_number}};
+    $("#n"+cell).text(""+{{c.clue_number}})
     if({{c.across_down}}==1)
           k=1;
     else
@@ -46,7 +55,7 @@
         //console.log($cell);
         //console.log($("#"+cell).css("background-color"));
         $("#"+cell).css("background-color","#fff")
-        cell=cell+k; 
+        cell=cell+k;
         //console.log(cell);
 
 
@@ -55,8 +64,8 @@
 {% endfor %}
 
   });
-  
-    
+
+
   </script>
 
 </head>
