@@ -60,12 +60,14 @@
               <!-- Modal Body -->
               <div class='modal-body'>
 
-                  <form class='form-horizontal' role='form' action='' method='post'>
+                  <form class='form-horizontal' role='form' action='/answer' method='post'>
+                  <input class="hidden" type="hidden" name="clue_num" value="0">
+                  <input class="hidden" type="hidden" name="a_d" value="a">
                       <div class='form-group'>
                       <label  class='col-sm-2 control-label'
                                 for='answer'>Answer</label>
                       <div class='col-sm-10'>
-                          <input type='text' name='answer' class='form-control'
+                          <input type='text' name='answer' value="" class='form-control'
                           id='answer'/>
                       </div>
                     </div>
@@ -73,12 +75,12 @@
                       <div class='col-sm-offset-2 col-sm-10'>
                         <div class='radio'>
                           <label>
-                              <input type='radio' value='1' name='type'/> Verb
+                              <input type='radio' value='0' name='type'/> Verb
                           </label>
                         </div>
                         <div class='radio'>
                           <label>
-                              <input type='radio' value='2' name='type'/> Noun
+                              <input type='radio' value='1' name='type'/> Noun
                           </label>
                         </div>
                       </div>
@@ -115,13 +117,12 @@
         $("#"+cell).css("background-color","#fff");
         $("#"+cell).css("cursor","pointer");
         classList=$("#"+cell).attr('class').split(/\s+/);
-        console.log(classList);
         if(classList.length==1)
         $("#"+cell).addClass(""+{{c.clue_number}}+t);
-        cell=cell+k;
         //console.log(cell);
         $("#"+cell).attr('data-target',"#m"+{{c.clue_number}}+t);
         $("#"+cell).attr('data-toggle',"modal");
+        cell=cell+k;
 
       }
       mod = document.createElement('div');
@@ -134,6 +135,12 @@
       $("#m"+{{c.clue_number}}+t).attr('role',"dialog");
       html = $.parseHTML(str);
       $("#m"+{{c.clue_number}}+t).append(html);
+      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='clue_num']");
+      u.val({{c.clue_number}});
+      console.log(u.val());
+      v = $("#m"+{{c.clue_number}}+t+" input[name='a_d']");
+      v.val(t);
+      console.log(v.val());
 
 {% endfor %}
 
