@@ -22,6 +22,9 @@ class Migration(migrations.Migration):
                 ('answer_length', models.PositiveIntegerField()),
                 ('across_down', models.PositiveIntegerField()),
                 ('cell_number', models.PositiveIntegerField()),
+                ('answer', models.CharField(max_length=1000,default="")),
+                ('ans_flag', models.PositiveIntegerField(default=0)),
+                ('verb_noun', models.PositiveIntegerField(default=1)),
             ],
         ),
     ]
