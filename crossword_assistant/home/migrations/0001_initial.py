@@ -25,6 +25,8 @@ class Migration(migrations.Migration):
                 ('answer', models.CharField(max_length=1000,default="")),
                 ('ans_flag', models.PositiveIntegerField(default=0)),
                 ('verb_noun', models.PositiveIntegerField(default=1)),
+                ('ans_list', models.CharField(max_length=1000,default="")),
+                ('list_flag', models.PositiveIntegerField(default=0)),
             ],
         ),
     ]

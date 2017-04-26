@@ -9,7 +9,7 @@
   <style>
   html,
   body {
-    height:100%
+    height:100%;
   }
   .cell
   { margin-left: 2px;
@@ -84,43 +84,61 @@
                       </div>
                     </div>
                     <div class='form-group'>
+                    <label  class='list col-sm-2 control-label'
+                              for='answer'>List</label>
+                      <div class='col-sm-10'>
+                        <select type='text' name='List'  class='list form-control'
+                        id='answer'>
+                        <option value=''></option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class='form-group'>
                       <div class='col-sm-offset-2 col-sm-10'>
                         <button type='submit' class='btn btn-default'>Submit</button>
                       </div>
                     </div>
+                  </form>
+                  <form class='form-horizontal' role='form' action='/solve' method='post'>
+                   <div class='form-group'>
+                    <div class='col-sm-offset-2 col-sm-10'>
+                     <input class="hidden" type="hidden" name="solve_clue_num" value="0">
+                     <input class="hidden" type="hidden" name="solve_a_d" value="a">
+                      <button type='submit' class='solve btn btn-default'>Solve</button>
+                    </div>
+                   </div>
                   </form>
 
               </div>
           </div>
       </div>`;
   $(function(){
- {% for c in data %}
+    {% for c in data %}
 
-    var k,t,classList;
-    var cell={{c.cell_number}};
-    $("#n"+cell).text(""+{{c.clue_number}})
-    if({{c.across_down}}==1)
-          {k=1;
-           t='a';
-         }
-    else{
-          k=100;
-          t='d';
+      var k,t,classList;
+      var cell={{c.cell_number}};
+      $("#n"+cell).text(""+{{c.clue_number}});
+      if({{c.across_down}}==1){
+        k=1;
+        t='a';
         }
-    for(var i=0;i<{{c.answer_length}};i++)
-      {
-        $cell = $("#"+cell);
-        //console.log($cell);
-        //console.log($("#"+cell).css("background-color"));
-        $("#"+cell).css("background-color","#fff");
-        $("#"+cell).css("cursor","pointer");
-        classList=$("#"+cell).attr('class').split(/\s+/);
-        if(classList.length==1)
+      else{
+        k=100;
+        t='d';
+        }
+    for(var i=0;i<{{c.answer_length}};i++){
+      // cell = ("#"+cell);
+      //console.log($cell);
+      //console.log($("#"+cell).css("background-color"));
+      $("#"+cell).css("background-color","#fff");
+      $("#"+cell).css("cursor","pointer");
+      classList=$("#"+cell).attr('class').split(/\s+/);
+      if(classList.length==1)
         $("#"+cell).addClass(""+{{c.clue_number}}+t);
         //console.log(cell);
-        $("#"+cell).attr('data-target',"#m"+{{c.clue_number}}+t);
-        $("#"+cell).attr('data-toggle',"modal");
-        cell=cell+k;
+      $("#"+cell).attr('data-target',"#m"+{{c.clue_number}}+t);
+      $("#"+cell).attr('data-toggle',"modal");
+      cell=cell+k;
 
         //$("#n"+cell).text("1");
 
@@ -128,7 +146,7 @@
       mod = document.createElement('div');
       mod.className = "modal fade";
       mod.id = "m"+{{c.clue_number}}+t;
-      document.getElementById("modal_container").appendChild(mod)
+      document.getElementById("modal_container").appendChild(mod);
       //document.write(i);
 
       $("#m"+{{c.clue_number}}+t).attr('tabindex',"-1");
@@ -137,12 +155,41 @@
       $("#m"+{{c.clue_number}}+t).append(html);
       u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='clue_num']");
       u.val({{c.clue_number}});
+      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='solve_clue_num']");
+      u.val({{c.clue_number}});
       console.log(u.val());
       v = $("#m"+{{c.clue_number}}+t+" input[name='a_d']");
       v.val(t);
+      v = $("#m"+{{c.clue_number}}+t+" input[name='solve_a_d']");
+      v.val(t);
       console.log(v.val());
 
+      if({{c.list_flag}} == 0){
+        $("#m"+{{c.clue_number}}+t+" .list").hide();
+      }
+      else{
+        $("#m"+{{c.clue_number}}+t+" .solve").hide();
+        {% for ans in c.ans_list %}
+          $("#m"+{{c.clue_number}}+t+" select").append($('<option>', {
+              value: "{{ans}}",
+              text: '{{ans}}'
+          }));
+        {% endfor%}
+      }
+
+
+      $("#m"+{{c.clue_number}}+t+" select").change(function(){
+          var p = $(this).find("option:selected").attr("value");
+          // console.log(p);
+          $("#m"+{{c.clue_number}}+t+" input[type='text']").val(p);
+      });
+
+      if ( {{c.ans_flag}} == 1){
+        $("#m"+{{c.clue_number}}+t+" input[type='text']").val("{{c.answer}}");
+      }
+
 {% endfor %}
+  
 
   });
 
@@ -187,15 +234,6 @@
 
 </head>
 <body class="body" style="background-color:#ccc">
-  <!--  {% for d in data%}
-      {%if d.ans_flag == 0%}
-        {% for b in d.answer%}
-          <p>{{b}}</p>
-        {%endfor%}
-      {%else%}
-        <p>{{d.answer }}{{d.cell_number }}</p>
-      {%endif%}
-    {%endfor%}-->
     <div id="abc" class="container" ></div>
     <div id="modal_container"></div>
 

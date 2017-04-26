@@ -2,55 +2,228 @@ import nltk
 from nltk.corpus import wordnet as wn, stopwords
 from nltk.tokenize import word_tokenize
 
-def algorithm(sent,k):
-    #print(wn.synsets("clef")[0].definition())
+
+def noun_fn(sent,k):
     text_words=word_tokenize(sent)
     stop_words=set(stopwords.words("english"))
     text_words =list(set(text_words) - set(stop_words))
-    #print(text_words)
-    #print(wn.synsets("car")[0].lemmas()[0].name())
-
-
-            
     syn = []
-    for i, val in enumerate(text_words):
-        syn.extend(wn.synsets(val))
-        
     syn_noun = []
     for i, val in enumerate(text_words):
-        syn_noun.extend(wn.synsets(val, pos=wn.NOUN))   
+        syn_noun.extend(wn.synsets(val, pos=wn.NOUN))
 
-    flag = 0
+    for i, val in enumerate(text_words):
+        syn.extend(wn.synsets(val))
+
     output_lesk = {}
+    output_noun = {}
     context_words = []
 
     for i, val in enumerate(syn):
-        words=word_tokenize(val.definition())    
+        words=word_tokenize(val.definition())
         context_words.extend(words)
 
     context_words = list(set(context_words)-set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
         if len(word) == k and word.isalpha():
-            sim = 0   
+            sim_noun = 0
+            sim = 0
+            for synset in list(wn.synsets(word,pos=wn.NOUN)):
+                temp = 0
+                for i, val in enumerate(syn_noun):
+                    temp = temp + synset.path_similarity(val)
+                sim_noun = max(temp,sim_noun)
+
             for synset in list(wn.synsets(word)):
                 def_words = word_tokenize(synset.definition())
                 def_words = list(set(def_words)-set(stop_words))
                 temp1=set(text_words).intersection(def_words)
-                temp2=set(context_words).intersection(def_words)        
+                temp2=set(context_words).intersection(def_words)
                 temp1 = len(temp1)/len(text_words)
                 temp2 = len(temp2)/len(context_words)
                 t = 0.75*temp1 +0.25*temp2
                 sim = max(t,sim)
-            #if flag == 0:
-            #print(sim)
             if sim > 0:
                 output_lesk[word] = sim
-                          
-    lesk = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse = True)) 
+            if sim_noun > 0:
+                output_noun[word] = sim_noun
+    nouns = sorted(output_noun, key=output_noun.__getitem__, reverse = True)
+    lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse = True)
 
-    return lesk[:50]
-     
+    max_nouns=0
+    for w in nouns:
+        if output_noun[w]>max_nouns:
+            max_nouns=output_noun[w]
 
+    for key, value in output_noun.items():
+        output_noun[key] = value / max_nouns
 
+    for w in lesk:
+        if not(w in output_noun):
+            output_noun[w]=0
+        output_lesk[w]+=output_noun[w]
+    rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse = True))
+    return rank[:50]
 
+def verb_fn(sent,k):
+    text_words=word_tokenize(sent)
+    stop_words=set(stopwords.words("english"))
+    text_words =list(set(text_words) - set(stop_words))
+    syn = []
+    syn_verb = []
+    for i, val in enumerate(text_words):
+        syn_verb.extend(wn.synsets(val, pos=wn.VERB))
+
+    for i, val in enumerate(text_words):
+        syn.extend(wn.synsets(val))
+
+    output_lesk = {}
+    output_verb = {}
+    context_words = []
+
+    for i, val in enumerate(syn):
+        words=word_tokenize(val.definition())
+        context_words.extend(words)
+
+    context_words = list(set(context_words)-set(stop_words))
+
+    for word in list(wn.all_lemma_names(lang='eng')):
+        if len(word) == k and word.isalpha():
+            sim_verb = 0
+            sim = 0
+            for synset in list(wn.synsets(word,pos=wn.VERB)):
+                temp = 0
+                for i, val in enumerate(syn_verb):
+                    temp = temp + synset.path_similarity(val)
+                sim_verb = max(temp,sim_verb)
+
+            for synset in list(wn.synsets(word)):
+                def_words = word_tokenize(synset.definition())
+                def_words = list(set(def_words)-set(stop_words))
+                temp1=set(text_words).intersection(def_words)
+                temp2=set(context_words).intersection(def_words)
+                temp1 = len(temp1)/len(text_words)
+                temp2 = len(temp2)/len(context_words)
+                t = 0.75*temp1 +0.25*temp2
+                sim = max(t,sim)
+            if sim > 0:
+                output_lesk[word] = sim
+            if sim_verb > 0:
+                output_verb[word] = sim_verb
+    verbs = sorted(output_verb, key=output_verb.__getitem__, reverse = True)
+    lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse = True)
+
+    max_verbs=0
+    for w in verbs:
+        if output_verb[w]>max_verbs:
+            max_verbs=output_verb[w]
+
+    for key, value in output_verb.items():
+        output_verb[key] = value / max_verbs
+
+    for w in lesk:
+        if not(w in output_verb):
+            output_verb[w]=0
+        output_lesk[w]+=output_verb[w]
+    rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse = True))
+    return rank[:50]
+
+def dont_know_fn(sent,k):
+    text_words=word_tokenize(sent)
+    stop_words=set(stopwords.words("english"))
+    text_words =list(set(text_words) - set(stop_words))
+
+    syn = []
+    for i, val in enumerate(text_words):
+        syn.extend(wn.synsets(val))
+
+    syn_verb = []
+    for i, val in enumerate(text_words):
+        syn_verb.extend(wn.synsets(val, pos=wn.VERB))
+
+    syn_noun = []
+    for i, val in enumerate(text_words):
+        syn_noun.extend(wn.synsets(val, pos=wn.NOUN))
+
+    flag = 0
+    output_verb = {}
+    output_noun = {}
+    output_lesk = {}
+    context_words = []
+
+    for i, val in enumerate(syn):
+        words=word_tokenize(val.definition())
+        context_words.extend(words)
+
+    context_words = list(set(context_words)-set(stop_words))
+
+    for word in list(wn.all_lemma_names(lang='eng')):
+        if len(word) == k and word.isalpha():
+            sim_verb = 0
+            sim_noun = 0
+            sim = 0
+            for synset in list(wn.synsets(word,pos=wn.VERB)):
+                temp = 0
+                for i, val in enumerate(syn_verb):
+                    sim_verb = sim_verb + synset.path_similarity(val)
+                sim_verb = max(temp,sim_verb)
+            for synset in list(wn.synsets(word,pos=wn.NOUN)):
+                temp = 0
+                for i, val in enumerate(syn_noun):
+                    temp = temp + synset.path_similarity(val)
+                sim_noun = max(temp,sim_noun)
+            for synset in list(wn.synsets(word)):
+                def_words = word_tokenize(synset.definition())
+                def_words = list(set(def_words)-set(stop_words))
+                temp1=set(text_words).intersection(def_words)
+                temp2=set(context_words).intersection(def_words)
+                temp1 = len(temp1)/len(text_words)
+                temp2 = len(temp2)/len(context_words)
+                t = 0.75*temp1 +0.25*temp2
+                sim = max(t,sim)
+
+            if sim > 0:
+                output_lesk[word] = sim
+            if sim_verb > 0:
+                output_verb[word] = sim_verb
+            if sim_noun > 0:
+                output_noun[word] = sim_noun
+
+    verbs = sorted(output_verb, key=output_verb.__getitem__, reverse = True)
+    nouns = sorted(output_noun, key=output_noun.__getitem__, reverse = True)
+    lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse = True)
+    max_verbs=0
+    for w in verbs:
+        if output_verb[w]>max_verbs:
+            max_verbs=output_verb[w]
+
+    for key, value in output_verb.items():
+        output_verb[key] = value / max_verbs
+
+    max_nouns=0
+    for w in nouns:
+        if output_noun[w]>max_nouns:
+            max_nouns=output_noun[w]
+
+    for key, value in output_noun.items():
+        output_noun[key] = value / max_nouns
+
+    tot_rank=dict(output_verb, **output_noun)
+    tot_rank={k : max(i for i in (output_verb.get(k), output_noun.get(k)) if i) for k in output_verb.keys() | output_noun}
+
+    for w in lesk:
+        if not(w in tot_rank):
+            tot_rank[w]=0
+        tot_rank[w]+=output_lesk[w]
+
+    rank = sorted(tot_rank, key=tot_rank.__getitem__, reverse = True)
+
+    flag=0
+    for w in rank:
+        flag = flag + 1
+        if flag > 50:
+            break
+        print(w,tot_rank[w])
+    print(rank[:50])
+    return rank[:50]
