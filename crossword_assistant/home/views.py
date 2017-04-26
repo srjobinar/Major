@@ -19,3 +19,7 @@ def clueinput(request):
 		query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num)
 		query.save()
 	return HttpResponseRedirect("/")
+
+def finish(request):
+	data = Clue.objects.all()
+	return render(request,'home/solve_crossword.html',{'data':data})
