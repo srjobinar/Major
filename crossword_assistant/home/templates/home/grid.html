@@ -33,6 +33,11 @@
     margin-left:  2px;
     margin-top: 0px;
   }
+  #finish_button
+  {
+    margin-left:46%;
+    margin-top:20px;
+  }
   </style>
 <script src="{% static 'home/js/jquery.min.js' %}"></script>
 <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
@@ -73,6 +78,9 @@
 
     <div id="abc" class="container" ></div>
     <div id="modal_container"></div>
+    <form  action='/finish' method='post'>
+      <button type='submit' class='btn btn-primary'id='finish_button'>Finish</button>
+    </form>
 
 </body>
 </html>
