@@ -28,9 +28,8 @@ def clueinput(request):
 def finish(request):
 	data = Clue.objects.all()
 	for d in data:
-		if d.ans_flag == 0:
-			d.answer=""#
-			#d.answer = json.loads(d.answer)
+		if d.list_flag == 1:
+			d.ans_list = json.loads(d.ans_list)
 	return render(request,'home/solve_crossword.html',{'data':data})
 
 def answer(request):
@@ -49,9 +48,24 @@ def answer(request):
 			clue.answer = answer
 			clue.ans_flag = 1
 			clue.save()
+	return HttpResponseRedirect('/finish')
+
+def solve(request):
+	if request.method == "POST":
+		clue_num = request.POST['solve_clue_num']
+		direct = request.POST['solve_a_d']
+		if direct == 'a':
+			a_d = 1
 		else:
-			a = find_ans.algorithm(str(clue.clue),int(clue.answer_length))
-			data = json.dumps(a)
-			clue.answer = data
-			clue.save()
+			a_d = 0
+		clue = Clue.objects.all().filter(clue_number = clue_num,across_down = a_d)[0]
+		if clue.verb_noun == 1:
+			a = find_ans.noun_fn(str(clue.clue),int(clue.answer_length))
+		elif clue.verb_noun == 2:
+			a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
+		else:
+			a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
+		data = json.dumps(a)
+		clue.answer = data
+		clue.save()
 	return HttpResponseRedirect('/finish')
