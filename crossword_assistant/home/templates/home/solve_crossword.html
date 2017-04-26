@@ -18,6 +18,8 @@
     height: 30px;
     width: 30px;
     background-color: #ccc;
+    color: #000;
+
 
   }
   #abc
@@ -32,6 +34,16 @@
     font-size: 9px;
     margin-left:  2px;
     margin-top: 0px;
+    height: 9px;
+  }
+  .textDiv
+  {
+    position:relative;
+    top:-8px;
+    color: #000;
+    font-size: 18px;
+    margin-left: 10px;
+
   }
   #finish_button
   {
@@ -73,20 +85,6 @@
                     </div>
                     <div class='form-group'>
                       <div class='col-sm-offset-2 col-sm-10'>
-                        <div class='radio'>
-                          <label>
-                              <input type='radio' value='0' name='type'/> Verb
-                          </label>
-                        </div>
-                        <div class='radio'>
-                          <label>
-                              <input type='radio' value='1' name='type'/> Noun
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                    <div class='form-group'>
-                      <div class='col-sm-offset-2 col-sm-10'>
                         <button type='submit' class='btn btn-default'>Submit</button>
                       </div>
                     </div>
@@ -124,6 +122,8 @@
         $("#"+cell).attr('data-toggle',"modal");
         cell=cell+k;
 
+        //$("#n"+cell).text("1");
+
       }
       mod = document.createElement('div');
       mod.className = "modal fade";
@@ -149,17 +149,53 @@
 
   </script>
 
+
+  <script>
+  $(function(){
+    var i,k,str,m;
+    {% for d in data%}
+
+      if({{d.ans_flag}}==1)
+      {
+        //$("#t"+{{d.cell_number}}).text();
+        str=""+"{{d.answer}}";
+
+        if({{d.across_down}}==1)
+         m=1;
+         else
+         m=100;
+
+
+        for(i=0;i<{{d.answer_length}};i++)
+        {
+
+           k={{d.cell_number}}+(i*m);
+           $("#t"+k).text(str[i]);
+           //console.log(str);
+         }
+
+
+
+      }
+    {%endfor%}
+
+
+
+  });
+
+  </script>
+
 </head>
 <body class="body" style="background-color:#ccc">
-    {% for d in data%}
+  <!--  {% for d in data%}
       {%if d.ans_flag == 0%}
         {% for b in d.answer%}
           <p>{{b}}</p>
         {%endfor%}
       {%else%}
-        <p>{{d.answer}}</p>  
-      {%endif%} 
-    {%endfor%}  
+        <p>{{d.answer }}{{d.cell_number }}</p>
+      {%endif%}
+    {%endfor%}-->
     <div id="abc" class="container" ></div>
     <div id="modal_container"></div>
 
