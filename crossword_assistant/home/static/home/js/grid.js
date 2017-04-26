@@ -15,7 +15,7 @@ str =  `<div class='modal-dialog'>
             <!-- Modal Body -->
             <div class='modal-body'>
 
-                <form class='form-horizontal' role='form'>
+                <form class='form-horizontal' role='form' method='post'>
                   <div class='form-group'>
                     <label  class='col-sm-2 control-label'
                               for='clue'>Clue</label>
