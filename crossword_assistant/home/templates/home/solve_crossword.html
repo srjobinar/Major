@@ -151,7 +151,15 @@
 
 </head>
 <body class="body" style="background-color:#ccc">
-
+    {% for d in data%}
+      {%if d.ans_flag == 0%}
+        {% for b in d.answer%}
+          <p>{{b}}</p>
+        {%endfor%}
+      {%else%}
+        <p>{{d.answer}}</p>  
+      {%endif%} 
+    {%endfor%}  
     <div id="abc" class="container" ></div>
     <div id="modal_container"></div>
 

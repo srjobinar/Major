@@ -26,6 +26,9 @@ def clueinput(request):
 
 def finish(request):
 	data = Clue.objects.all()
+	for d in data:
+		if d.ans_flag == 0:
+			d.answer = json.loads(d.answer)
 	return render(request,'home/solve_crossword.html',{'data':data})
 
 def answer(request):
