@@ -57,6 +57,25 @@ str =  `<div class='modal-dialog'>
                   </div>
                   <div class='form-group'>
                     <div class='col-sm-offset-2 col-sm-10'>
+                      <div class='radio'>
+                        <label>
+                            <input type='radio' value='2' name='answer_type'/> Verb
+                        </label>
+                      </div>
+                      <div class='radio'>
+                        <label>
+                            <input type='radio' value='1' name='answer_type'/> Noun
+                        </label>
+                      </div>
+                      <div class='radio'>
+                        <label>
+                            <input type='radio' value='0' name='answer_type'/> No Idea
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='form-group'>
+                    <div class='col-sm-offset-2 col-sm-10'>
                       <button type='submit' class='btn btn-default'>Apply</button>
                     </div>
                   </div>
