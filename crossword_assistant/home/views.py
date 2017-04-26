@@ -15,6 +15,7 @@ def clueinput(request):
 		clueno = request.POST['clueno']
 		length = request.POST['length']
 		direct = request.POST['type']
-		query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct)
+		cell_num = request.POST['cell_num']
+		query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num)
 		query.save()
 	return HttpResponseRedirect("/")
