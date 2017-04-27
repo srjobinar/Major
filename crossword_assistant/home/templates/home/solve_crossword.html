@@ -55,7 +55,58 @@
 <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'home/js/crossword.js' %}"></script>
 <script type="text/javascript">
-  str =  `<div class='modal-dialog'>
+
+  $(function(){
+    {% for c in data %}
+
+      var k,t,classList;
+      var cell={{c.cell_number}};
+      $("#n"+cell).text(""+{{c.clue_number}});
+      if({{c.across_down}}==1){
+        k=1;
+        t='a';
+        }
+      else{
+        k=100;
+        t='d';
+        }
+    for(var i=0;i<{{c.answer_length}};i++){
+      // cell = ("#"+cell);
+      //console.log($cell);
+      //console.log($("#"+cell).css("background-color"));
+      $("#"+cell).css("background-color","#fff");
+      $("#"+cell).css("cursor","pointer");
+      classList=$("#"+cell).attr('class').split(/\s+/);
+      if(classList.length==1)
+        $("#"+cell).addClass(""+{{c.clue_number}}+t);
+        //console.log(cell);
+      $("#"+cell).attr('data-target',"#m"+{{c.clue_number}}+t);
+      $("#"+cell).attr('data-toggle',"modal");
+      cell=cell+k;
+
+        //$("#n"+cell).text("1");
+
+      }
+      mod = document.createElement('div');
+      mod.className = "modal fade";
+      mod.id = "m"+{{c.clue_number}}+t;
+      document.getElementById("modal_container").appendChild(mod);
+      //document.write(i);
+
+      
+
+{% endfor %}
+  
+
+  });
+
+
+  </script>
+
+
+  <script>
+   var cell_letter={}
+    str1 =  `<div class='modal-dialog'>
           <div class='modal-content'>
               <!-- Modal Header -->
               <div class='modal-header'>
@@ -112,119 +163,130 @@
               </div>
           </div>
       </div>`;
+
   $(function(){
-    {% for c in data %}
-
-      var k,t,classList;
-      var cell={{c.cell_number}};
-      $("#n"+cell).text(""+{{c.clue_number}});
-      if({{c.across_down}}==1){
-        k=1;
-        t='a';
-        }
-      else{
-        k=100;
-        t='d';
-        }
-    for(var i=0;i<{{c.answer_length}};i++){
-      // cell = ("#"+cell);
-      //console.log($cell);
-      //console.log($("#"+cell).css("background-color"));
-      $("#"+cell).css("background-color","#fff");
-      $("#"+cell).css("cursor","pointer");
-      classList=$("#"+cell).attr('class').split(/\s+/);
-      if(classList.length==1)
-        $("#"+cell).addClass(""+{{c.clue_number}}+t);
-        //console.log(cell);
-      $("#"+cell).attr('data-target',"#m"+{{c.clue_number}}+t);
-      $("#"+cell).attr('data-toggle',"modal");
-      cell=cell+k;
-
-        //$("#n"+cell).text("1");
-
-      }
-      mod = document.createElement('div');
-      mod.className = "modal fade";
-      mod.id = "m"+{{c.clue_number}}+t;
-      document.getElementById("modal_container").appendChild(mod);
-      //document.write(i);
-
-      $("#m"+{{c.clue_number}}+t).attr('tabindex',"-1");
-      $("#m"+{{c.clue_number}}+t).attr('role',"dialog");
-      html = $.parseHTML(str);
-      $("#m"+{{c.clue_number}}+t).append(html);
-      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='clue_num']");
-      u.val({{c.clue_number}});
-      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='solve_clue_num']");
-      u.val({{c.clue_number}});
-      console.log(u.val());
-      v = $("#m"+{{c.clue_number}}+t+" input[name='a_d']");
-      v.val(t);
-      v = $("#m"+{{c.clue_number}}+t+" input[name='solve_a_d']");
-      v.val(t);
-      console.log(v.val());
-
-      if({{c.list_flag}} == 0){
-        $("#m"+{{c.clue_number}}+t+" .list").hide();
-      }
-      else{
-        $("#m"+{{c.clue_number}}+t+" .solve").hide();
-        {% for ans in c.ans_list %}
-          $("#m"+{{c.clue_number}}+t+" select").append($('<option>', {
-              value: "{{ans}}",
-              text: '{{ans}}'
-          }));
-        {% endfor%}
-      }
-
-
-      $("#m"+{{c.clue_number}}+t+" select").change(function(){
-          var p = $(this).find("option:selected").attr("value");
-          // console.log(p);
-          $("#m"+{{c.clue_number}}+t+" input[type='text']").val(p);
-      });
-
-      if ( {{c.ans_flag}} == 1){
-        $("#m"+{{c.clue_number}}+t+" input[type='text']").val("{{c.answer}}");
-      }
-
-{% endfor %}
-  
-
-  });
-
-
-  </script>
-
-
-  <script>
-  $(function(){
-    var i,k,str,m;
+    
+    var i,k,str,m,t;
     {% for d in data%}
+
+      if({{d.across_down}}==1)
+         m=1;
+      else
+         m=100;
+
 
       if({{d.ans_flag}}==1)
       {
         //$("#t"+{{d.cell_number}}).text();
+        //console.log("{{d.answer}}");
         str=""+"{{d.answer}}";
 
-        if({{d.across_down}}==1)
-         m=1;
-         else
-         m=100;
 
 
         for(i=0;i<{{d.answer_length}};i++)
         {
 
            k={{d.cell_number}}+(i*m);
+           cell_letter[k]=str[i];
            $("#t"+k).text(str[i]);
-           //console.log(str);
-         }
+           
+           //console.log("abc");
+            }
+          }
+      if({{d.across_down}}==1){
+        t='a';
+        }
+      else{
+        t='d';
+        }  
+
+      $("#m"+{{d.clue_number}}+t).attr('tabindex',"-1");
+      $("#m"+{{d.clue_number}}+t).attr('role',"dialog");
+      html = $.parseHTML(str1);
+      $("#m"+{{d.clue_number}}+t).append(html);
+      u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='clue_num']");
+      u.val({{d.clue_number}});
+      u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='solve_clue_num']");
+      u.val({{d.clue_number}});
+      //console.log(u.val());
+      v = $("#m"+{{d.clue_number}}+t+" input[name='a_d']");
+      v.val(t);
+      v = $("#m"+{{d.clue_number}}+t+" input[name='solve_a_d']");
+      v.val(t);
+      //console.log(v.val());
 
 
-
+      //regular expression
+      var clue_exp={};
+      var s="";
+      for(i=0;i<{{d.answer_length}};i++)
+      {
+        k={{d.cell_number}}+(i*m);
+        if(cell_letter[k]==null)
+          s=s+"_";
+        else
+          s=s+cell_letter[k];
+        //console.log(cell_letter[k]);
+        //console.log(s);
       }
+
+      //clue_exp[""+{{d.clue_number}}+t]=s;
+      console.log(s);
+      //console.log(cell_letter);
+
+
+
+
+
+
+      if({{d.list_flag}} == 0){
+        $("#m"+{{d.clue_number}}+t+" .list").hide();
+      }
+      else{
+        $("#m"+{{d.clue_number}}+t+" .solve").hide();
+        {% for ans in d.ans_list %}
+          var flag=0;
+          var str2=""+"{{ans}}";
+          if(str2.length==s.length)
+          {
+            for(i=0;i<str2.length;i++)
+            {
+              if(s[i]!='_'&&s[i]!=str2[i])
+                break;
+            }
+            if(i==str2.length)
+              flag=1;
+          }
+          if (flag==1)
+          {
+          $("#m"+{{d.clue_number}}+t+" select").append($('<option>', {
+              value: "{{ans}}",
+              text: '{{ans}}'
+          }));
+        }
+        {% endfor%}
+      }
+
+
+      $("#m"+{{d.clue_number}}+t+" select").change(function(){
+          var p = $(this).find("option:selected").attr("value");
+          // console.log(p);
+          $("#m"+{{d.clue_number}}+t+" input[type='text']").val(p);
+      });
+
+      if ( {{d.ans_flag}} == 1){
+        $("#m"+{{d.clue_number}}+t+" input[type='text']").val("{{d.answer}}");
+      }
+
+      //regular expression
+
+
+    
+      
+
     {%endfor%}
+
+   
 
 
 
