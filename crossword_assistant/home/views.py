@@ -66,6 +66,7 @@ def solve(request):
 		else:
 			a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
 		data = json.dumps(a)
-		clue.answer = data
+		clue.ans_list = data
+		clue.list_flag = 1
 		clue.save()
 	return HttpResponseRedirect('/finish')
