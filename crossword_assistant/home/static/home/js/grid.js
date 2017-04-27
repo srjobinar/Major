@@ -37,7 +37,7 @@ str =  `<div class='modal-dialog'>
                     <label class='col-sm-2 control-label'
                           for='length' >Length</label>
                     <div class='col-sm-10'>
-                        <input id='clue_len' type='number' cln=1 step=1 name='length' class='form-control textbox'
+                        <input id='clue_len' min=1 type='number' step=1 name='length' class='form-control textbox'
                             required/>
                     </div>
                   </div>
