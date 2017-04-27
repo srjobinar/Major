@@ -37,17 +37,44 @@ def answer(request):
 		answer = request.POST['answer']
 		clue_num = request.POST['clue_num']
 		direct = request.POST['a_d']
-
+		reg_exp = request.POST['reg_exp']
+		dictionary = request.POST['dict']
+		cl = ""+clue_num+direct
+		print(cl)
+		ndict = json.loads(dictionary)
 		if direct == 'a':
 			a_d = 1
+			d = 0
+			k=1
 		else:
+			d=1
+			k=100
 			a_d = 0
 		clue = Clue.objects.all().filter(clue_number = clue_num,across_down = a_d)[0]
-		if answer != "":
 			# clue = Clue(clue_number = clue_num,across_down = a_d).objects
-			clue.answer = answer
+		clue.answer = answer
+		if answer != "":
 			clue.ans_flag = 1
-			clue.save()
+		else:
+			clue.ans_flag = 0	
+		clue.save()
+		arr = []
+		for i in range(0,len(answer)):
+			if reg_exp[i] != '_' and reg_exp[i]!=answer[i]:
+				cell=clue.cell_number+(k*i)
+				classes = str(ndict[str(cell)])
+				classes = classes.replace(" ","")
+				classes = classes.replace(cl,"")
+				arr.append(classes)
+		for i,val in enumerate(arr):
+			if(d==1):
+				val = val.replace("a","")
+			else:
+				val = val.replace("d","")
+			clue = Clue.objects.all().filter(clue_number = val,across_down = d)[0]
+			clue.answer = ""
+			clue.ans_flag = 0
+			clue.save()		
 	return HttpResponseRedirect('/finish')
 
 def solve(request):

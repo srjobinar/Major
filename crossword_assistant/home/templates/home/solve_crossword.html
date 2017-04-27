@@ -55,63 +55,7 @@
 <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
 <script src="{% static 'home/js/crossword.js' %}"></script>
 <script type="text/javascript">
-  str =  `<div class='modal-dialog'>
-          <div class='modal-content'>
-              <!-- Modal Header -->
-              <div class='modal-header'>
-                  <button type='button' class='close'
-                     data-dismiss='modal'>
-                         <span aria-hidden='true'>&times;</span>
-                         <span class='sr-only'>Close</span>
-                  </button>
-                  <h4 class='modal-title' id='myModalLabel'>
-                      Clue Info
-                  </h4>
-              </div>
 
-              <!-- Modal Body -->
-              <div class='modal-body'>
-
-                  <form class='form-horizontal' role='form' action='/answer' method='post'>
-                  <input class="hidden" type="hidden" name="clue_num" value="0">
-                  <input class="hidden" type="hidden" name="a_d" value="a">
-                      <div class='form-group'>
-                      <label  class='col-sm-2 control-label'
-                                for='answer'>Answer</label>
-                      <div class='col-sm-10'>
-                          <input type='text' name='answer' value="" class='form-control'
-                          id='answer'/>
-                      </div>
-                    </div>
-                    <div class='form-group'>
-                    <label  class='list col-sm-2 control-label'
-                              for='answer'>List</label>
-                      <div class='col-sm-10'>
-                        <select type='text' name='List'  class='list form-control'
-                        id='answer'>
-                        <option value=''></option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class='form-group'>
-                      <div class='col-sm-offset-2 col-sm-10'>
-                        <button type='submit' class='btn btn-default'>Submit</button>
-                      </div>
-                    </div>
-                  </form>
-                  <form class='form-horizontal' role='form' action='/solve' method='post'>
-                   <div class='form-group'>
-                    <div class='col-sm-offset-2 col-sm-10'>
-                     <input class="hidden" type="hidden" name="solve_clue_num" value="0">
-                     <input class="hidden" type="hidden" name="solve_a_d" value="a">
-                      <button type='submit' class='solve btn btn-default'>Solve</button>
-                    </div>
-                   </div>
-                  </form>
-
-              </div>
-          </div>
-      </div>`;
   $(function(){
     {% for c in data %}
 
@@ -149,44 +93,7 @@
       document.getElementById("modal_container").appendChild(mod);
       //document.write(i);
 
-      $("#m"+{{c.clue_number}}+t).attr('tabindex',"-1");
-      $("#m"+{{c.clue_number}}+t).attr('role',"dialog");
-      html = $.parseHTML(str);
-      $("#m"+{{c.clue_number}}+t).append(html);
-      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='clue_num']");
-      u.val({{c.clue_number}});
-      u = $("#m"+{{c.clue_number}}+t+" input.hidden[name='solve_clue_num']");
-      u.val({{c.clue_number}});
-      console.log(u.val());
-      v = $("#m"+{{c.clue_number}}+t+" input[name='a_d']");
-      v.val(t);
-      v = $("#m"+{{c.clue_number}}+t+" input[name='solve_a_d']");
-      v.val(t);
-      console.log(v.val());
-
-      if({{c.list_flag}} == 0){
-        $("#m"+{{c.clue_number}}+t+" .list").hide();
-      }
-      else{
-        $("#m"+{{c.clue_number}}+t+" .solve").hide();
-        {% for ans in c.ans_list %}
-          $("#m"+{{c.clue_number}}+t+" select").append($('<option>', {
-              value: "{{ans}}",
-              text: '{{ans}}'
-          }));
-        {% endfor%}
-      }
-
-
-      $("#m"+{{c.clue_number}}+t+" select").change(function(){
-          var p = $(this).find("option:selected").attr("value");
-          // console.log(p);
-          $("#m"+{{c.clue_number}}+t+" input[type='text']").val(p);
-      });
-
-      if ( {{c.ans_flag}} == 1){
-        $("#m"+{{c.clue_number}}+t+" input[type='text']").val("{{c.answer}}");
-      }
+      
 
 {% endfor %}
   
@@ -198,38 +105,257 @@
 
 
   <script>
+   var cell_letter={};
+   var cell_count={};
+   var cell_class={};
+       str1 =  `<div class='modal-dialog'>
+          <div class='modal-content'>
+              <!-- Modal Header -->
+              <div class='modal-header'>
+                  <button type='button' class='close'
+                     data-dismiss='modal'>
+                         <span aria-hidden='true'>&times;</span>
+                         <span class='sr-only'>Close</span>
+                  </button>
+                  <h4 class='modal-title' id='myModalLabel'>
+                      Clue Info
+                  </h4>
+              </div>
+
+              <!-- Modal Body -->
+              <div class='modal-body'>
+
+                  <form class='form-horizontal' role='form' action='/answer' method='post'>
+                  <input class="hidden" type="hidden" name="clue_num" value="0">
+                  <input class="hidden" type="hidden" name="a_d" value="a">
+                  <input class="hidden" type="hidden" name="reg_exp" value="a">
+                  <input class="hidden" type="hidden" name="dict" value="">
+                      <div class='form-group'>
+                      <label  class='col-sm-2 control-label'
+                                for='answer'>Answer</label>
+                      <div class='col-sm-10'>
+                          <input type='text' name='answer' value="" class='form-control'
+                          id='answer'/>
+                      </div>
+                    </div>
+                    <div class='form-group'>
+                    <label  class='list col-sm-2 control-label'
+                              for='list'>List</label>
+                      <div class='col-sm-10'>
+                        <select  name='List'  class='list form-control'
+                        id='answer'>
+                        <option value=""></option>
+                        </select>
+                      </div>
+                    </div>
+                    <div class='form-group'>
+                      <div class='col-sm-offset-2 col-sm-10'>
+                        <button type='submit' class='btn btn-default'>Submit</button>
+                      </div>
+                    </div>
+                  </form>
+                  <form class='form-horizontal' role='form' action='/solve' method='post'>
+                   <div class='form-group'>
+                    <div class='col-sm-offset-2 col-sm-10'>
+                     <input class="hidden" type="hidden" name="solve_clue_num" value="0">
+                     <input class="hidden" type="hidden" name="solve_a_d" value="a">
+                      <button type='submit' class='solve btn btn-default'>Solve</button>
+                    </div>
+                   </div>
+                  </form>
+
+              </div>
+          </div>
+      </div>`;
+
   $(function(){
-    var i,k,str,m;
+    
+    var i,k,str;
     {% for d in data%}
+
+      if({{d.across_down}}==1)
+         m=1;
+      else
+         m=100;
+
+      if({{d.across_down}}==1){
+             t='a';
+        }
+      else{
+              t='d';
+        } 
+
 
       if({{d.ans_flag}}==1)
       {
         //$("#t"+{{d.cell_number}}).text();
+        //console.log("{{d.answer}}");
         str=""+"{{d.answer}}";
 
-        if({{d.across_down}}==1)
-         m=1;
-         else
-         m=100;
 
 
         for(i=0;i<{{d.answer_length}};i++)
         {
 
            k={{d.cell_number}}+(i*m);
+           cell_letter[k]=str[i];
            $("#t"+k).text(str[i]);
-           //console.log(str);
-         }
+           if(cell_count[k]==null)
+            cell_count[k]=1;
+           else
+            cell_count[k]=2;
+           //console.log("abc");
+
+            if(cell_class[k]==null)
+               cell_class[k]=""+{{d.clue_number}}+t;
+             else
+               cell_class[k]=cell_class[k]+" "+{{d.clue_number}}+t;
+           
+            }
 
 
+          }
+ 
 
-      }
+      $("#m"+{{d.clue_number}}+t).attr('tabindex',"-1");
+      $("#m"+{{d.clue_number}}+t).attr('role',"dialog");
+      html = $.parseHTML(str1);
+      $("#m"+{{d.clue_number}}+t).append(html);
+      u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='clue_num']");
+      u.val({{d.clue_number}});
+      u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='solve_clue_num']");
+      u.val({{d.clue_number}});
+      //console.log(u.val());
+      v = $("#m"+{{d.clue_number}}+t+" input[name='a_d']");
+      v.val(t);
+      v = $("#m"+{{d.clue_number}}+t+" input[name='solve_a_d']");
+      v.val(t);
+      //console.log(v.val());
+
+
+      //regular expression
+      //var clue_exp={};
+      
+
+      
+
+
+    
+      
+
     {%endfor%}
 
+    console.log(cell_class);
+   
+   fn1();
 
 
   });
 
+  function fn1()
+  { 
+    var i,m,t,k;
+    
+    {% for d in data %}
+    
+    if({{d.across_down}}==1){
+        t='a';
+        m=1;
+        }
+      else{
+        t='d';
+        m=100;
+        }  
+        var s="";
+    u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='dict']");
+    u.val(JSON.stringify(cell_class));
+    if({{d.ans_flag}}==0)
+    {
+    
+      for(i=0;i<{{d.answer_length}};i++)
+      {
+        k={{d.cell_number}}+(i*m);
+
+        if(cell_letter[k]==null)
+          s=s+"_";
+        else
+          s=s+cell_letter[k];
+        //console.log(cell_letter[k]);
+        //console.log(s);
+      }
+    }
+
+      //clue_exp[""+{{d.clue_number}}+t]=s;
+      //console.log(s);
+      //console.log(cell_count);
+   if({{d.ans_flag}}==1)
+    {
+      //console.log({{d.ans_flag}});
+       for(i=0;i<{{d.answer_length}};i++)
+      {
+        k={{d.cell_number}}+(i*m);
+         if(cell_count[k]==1)
+          s=s+"_";
+         else
+          s=s+cell_letter[k];
+      }
+
+
+    }
+
+    u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='reg_exp']");
+    u.val(s);
+
+
+
+      if({{d.list_flag}} == 0){
+        $("#m"+{{d.clue_number}}+t+" .list").hide();
+      }
+      else{
+        $("#m"+{{d.clue_number}}+t+" .solve").hide();
+        {% for ans in d.ans_list %}
+          var flag=0;
+          var str2=""+"{{ans}}";
+          if(str2.length==s.length)
+          {
+            for(i=0;i<str2.length;i++)
+            {
+              if(s[i]!='_'&&s[i]!=str2[i])
+                break;
+            }
+            if(i==str2.length)
+              flag=1;
+          }
+          if (flag==1)
+          {
+          $("#m"+{{d.clue_number}}+t+" select").append($('<option>', {
+              value: "{{ans}}",
+              text: '{{ans}}'
+          }));
+        }
+        {% endfor%}
+      }
+
+
+      $("#m"+{{d.clue_number}}+t+" select").change(function(){
+         if({{d.across_down}}==1){
+           t='a';
+           }
+         else{
+           t='d';
+           }
+         var p = $(this).find("option:selected").attr("value");
+         //console.log(p);
+         $("#m"+{{d.clue_number}}+t+" input[type='text']").val(p);
+      });
+
+      if ( {{d.ans_flag}} == 1){
+        $("#m"+{{d.clue_number}}+t+" input[type='text']").val("{{d.answer}}");
+      }
+
+      {%endfor%}
+  }      
+  
   </script>
 
 </head>
