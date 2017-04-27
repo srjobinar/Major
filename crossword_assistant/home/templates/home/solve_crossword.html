@@ -105,8 +105,8 @@
 
 
   <script>
-   var cell_letter={}
-    str1 =  `<div class='modal-dialog'>
+   var cell_letter={};
+       str1 =  `<div class='modal-dialog'>
           <div class='modal-content'>
               <!-- Modal Header -->
               <div class='modal-header'>
@@ -166,7 +166,7 @@
 
   $(function(){
     
-    var i,k,str,m,t;
+    var i,k,str;
     {% for d in data%}
 
       if({{d.across_down}}==1)
@@ -217,8 +217,40 @@
 
 
       //regular expression
-      var clue_exp={};
-      var s="";
+      //var clue_exp={};
+      
+
+      
+
+
+    
+      
+
+    {%endfor%}
+
+   
+   fn1();
+
+
+  });
+
+  function fn1()
+  { 
+    var i,m,t,k;
+    
+    {% for d in data %}
+    if({{d.across_down}}==1)
+         m=1;
+      else
+         m=100;
+    if({{d.across_down}}==1){
+        t='a';
+        }
+      else{
+        t='d';
+        }  
+
+    var s="";
       for(i=0;i<{{d.answer_length}};i++)
       {
         k={{d.cell_number}}+(i*m);
@@ -278,19 +310,8 @@
         $("#m"+{{d.clue_number}}+t+" input[type='text']").val("{{d.answer}}");
       }
 
-      //regular expression
-
-
-    
-      
-
-    {%endfor%}
-
-   
-
-
-
-  });
+      {%endfor%}
+  }      
 
   </script>
 
