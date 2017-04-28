@@ -107,6 +107,7 @@
   <script>
    var cell_letter={};
    var cell_count={};
+   var cell_class={};
        str1 =  `<div class='modal-dialog'>
           <div class='modal-content'>
               <!-- Modal Header -->
@@ -127,6 +128,8 @@
                   <form class='form-horizontal' role='form' action='/answer' method='post'>
                   <input class="hidden" type="hidden" name="clue_num" value="0">
                   <input class="hidden" type="hidden" name="a_d" value="a">
+                  <input class="hidden" type="hidden" name="reg_exp" value="a">
+                  <input class="hidden" type="hidden" name="dict" value="">
                       <div class='form-group'>
                       <label  class='col-sm-2 control-label'
                                 for='answer'>Answer</label>
@@ -175,6 +178,13 @@
       else
          m=100;
 
+      if({{d.across_down}}==1){
+             t='a';
+        }
+      else{
+              t='d';
+        } 
+
 
       if({{d.ans_flag}}==1)
       {
@@ -195,14 +205,17 @@
            else
             cell_count[k]=2;
            //console.log("abc");
+
+            if(cell_class[k]==null)
+               cell_class[k]=""+{{d.clue_number}}+t;
+             else
+               cell_class[k]=cell_class[k]+" "+{{d.clue_number}}+t;
+           
             }
+
+
           }
-      if({{d.across_down}}==1){
-        t='a';
-        }
-      else{
-        t='d';
-        }  
+ 
 
       $("#m"+{{d.clue_number}}+t).attr('tabindex',"-1");
       $("#m"+{{d.clue_number}}+t).attr('role',"dialog");
@@ -232,6 +245,7 @@
 
     {%endfor%}
 
+    console.log(cell_class);
    
    fn1();
 
@@ -241,7 +255,6 @@
   function fn1()
   { 
     var i,m,t,k;
-    
     
     {% for d in data %}
     
@@ -254,6 +267,8 @@
         m=100;
         }  
         var s="";
+    u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='dict']");
+    u.val(JSON.stringify(cell_class));
     if({{d.ans_flag}}==0)
     {
     
@@ -271,11 +286,11 @@
     }
 
       //clue_exp[""+{{d.clue_number}}+t]=s;
-      console.log(s);
+      //console.log(s);
       //console.log(cell_count);
    if({{d.ans_flag}}==1)
     {
-      console.log({{d.ans_flag}});
+      //console.log({{d.ans_flag}});
        for(i=0;i<{{d.answer_length}};i++)
       {
         k={{d.cell_number}}+(i*m);
@@ -288,7 +303,8 @@
 
     }
 
-
+    u = $("#m"+{{d.clue_number}}+t+" input.hidden[name='reg_exp']");
+    u.val(s);
 
 
 
@@ -329,7 +345,7 @@
            t='d';
            }
          var p = $(this).find("option:selected").attr("value");
-         console.log(p);
+         //console.log(p);
          $("#m"+{{d.clue_number}}+t+" input[type='text']").val(p);
       });
 
@@ -339,7 +355,7 @@
 
       {%endfor%}
   }      
-
+  
   </script>
 
 </head>
