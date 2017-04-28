@@ -43,11 +43,13 @@ def answer(request):
 		else:
 			a_d = 0
 		clue = Clue.objects.all().filter(clue_number = clue_num,across_down = a_d)[0]
-		if answer != "":
 			# clue = Clue(clue_number = clue_num,across_down = a_d).objects
-			clue.answer = answer
+		clue.answer = answer
+		if answer != "":
 			clue.ans_flag = 1
-			clue.save()
+		else:
+			clue.ans_flag = 0	
+		clue.save()
 	return HttpResponseRedirect('/finish')
 
 def solve(request):
