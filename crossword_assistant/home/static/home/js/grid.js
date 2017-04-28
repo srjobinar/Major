@@ -29,7 +29,7 @@ str =  `<div class='modal-dialog'>
                     <label class='col-sm-2 control-label'
                           for='clueno' >Clue No</label>
                     <div class='col-sm-10'>
-                        <input type='number' min=1 step=1 name='clueno' class='form-control clue'
+                        <input type='number' min=1 step=1 name='clueno' class='form-control clue1'
                             id='clueno' required />
                     </div>
                   </div>
@@ -161,7 +161,7 @@ $(document).ready(function() {
         }
       }
       function checkAcrossClue(){
-        var clu = $(".in").find("input.clue").val();
+        var clu = $(".in").find("input.clue1").val();
               acr=localStorage.getItem("acr");
               if (acr.indexOf("."+clu+".") >= 0){
                 show_err1();
@@ -173,7 +173,7 @@ $(document).ready(function() {
             }
       }
       function setAcrossClue(){
-        var clu = $(".in").find("input.clue").val();
+        var clu = $(".in").find("input.clue1").val();
               acr=localStorage.getItem("acr");
               if (acr.indexOf("."+clu+".") >= 0){
 
@@ -184,7 +184,7 @@ $(document).ready(function() {
             }
       }
       function checkDownClue(){
-        var clu = $(".in").find("input.clue").val();
+        var clu = $(".in").find("input.clue1").val();
               dow=localStorage.getItem("dow");
               if (dow.indexOf("."+clu+".") >= 0){
                 show_err1();
@@ -196,7 +196,7 @@ $(document).ready(function() {
       }
 
       function setDownClue(){
-        var clu = $(".in").find("input.clue").val();
+        var clu = $(".in").find("input.clue1").val();
               dow=localStorage.getItem("dow");
               if (dow.indexOf("."+clu+".") >= 0){
 
@@ -230,7 +230,7 @@ $(document).ready(function() {
 
         });
 
-        $html.find("input.clue").change(function(){
+        $html.find("input.clue1").change(function(){
           //error check
           switch(selection){
             case undefined: return;break;

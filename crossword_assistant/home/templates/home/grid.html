@@ -1,87 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-{% load staticfiles %}
-<link rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" type = "text/css"/>
-<link rel="stylesheet" href="{% static 'home/css/font_awesone.css' %}" type = "text/css"/>
-<meta name="viewport" content = "width=device-width, initial-scale=1.0">
+    <meta charset="utf-8"/>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static 'home/css/bootstrap.min.css' %}" type="text/css"/>
+    <link rel="stylesheet" href="{% static 'home/css/font_awesone.css' %}" type = "text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-  html,
-  body {
-    height:100%
-  }
-  .cell
-  { margin-left: 2px;
-    margin-top: 2px;
-    float: left;
-    height: 30px;
-    width: 30px;
-    background-color: #000;
-    cursor: pointer;
-  }
-  #abc
-  {
+    <style>
+        html,
+        body {
+            height: 100%
+        }
 
-    margin-top:100px;
-    width:560px;
-  }
-  .cellNo
-  {
-    color: #000;
-    font-size: 9px;
-    margin-left:  2px;
-    margin-top: 0px;
-  }
-  #finish_button
-  {
-    margin-left:46%;
-    margin-top:20px;
-  }
-  </style>
-<script src="{% static 'home/js/jquery.min.js' %}"></script>
-<script src="{% static 'home/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'home/js/grid.js' %}"></script>
+        .cell {
+            margin-left: 2px;
+            margin-top: 2px;
+            float: left;
+            height: 30px;
+            width: 30px;
+            background-color: #000;
+            cursor: pointer;
+        }
+        #across
+        {
+            text-indent: each-line;
+            padding-left: 50px;
 
-  <script type="text/javascript">
-  $(function(){
- {% for c in data %}
+        }
 
-    var k;
-    var cell={{c.cell_number}};
-    $("#n"+cell).text(""+{{c.clue_number}})
-    if({{c.across_down}}==1)
-          k=1;
-    else
-          k=100;
-    for(var i=0;i<{{c.answer_length}};i++)
-      {
-        $cell = $("#"+cell);
-        //console.log($cell);
-        //console.log($("#"+cell).css("background-color"));
-        $("#"+cell).css("background-color","#fff")
-        cell=cell+k;
-        //console.log(cell);
+        .clue {
+            text-align: justify;
+            padding-top: 150px;
+        }
+
+        #abc {
+            margin-left: 30px;
+            margin-top: 100px;
+            width: 560px;
+        }
+
+        .cellNo {
+            color: #000;
+            font-size: 9px;
+            margin-left: 2px;
+            margin-top: 0px;
+        }
+
+        #finish_button {
+            margin-left: 50%;
+            margin-top: 20px;
+        }
+        #new_button {
+            margin-left: 35%;
+            margin-top: -58px;
+        }
+    </style>
+    <script src="{% static 'home/js/jquery.min.js' %}"></script>
+    <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'home/js/grid.js' %}"></script>
+
+    <script type="text/javascript">
+        $(function () {
+            {% for c in data %}
+
+                var k, across_div, down_div;
+                var cell ={{c.cell_number}};
+                $("#n" + cell).text("" +{{c.clue_number}})
+                if ({{c.across_down}}==1)
+                k = 1;
+                else
+                k = 100;
+                for (var i = 0; i <{{c.answer_length}}; i++) {
+                    $cell = $("#" + cell);
+                    //console.log($cell);
+                    //console.log($("#"+cell).css("background-color"));
+                    $("#" + cell).css("background-color", "#fff")
+                    cell = cell + k;
+                    //console.log(cell);
 
 
-      }
+                }
+                across_div = document.getElementById("across");
+                down_div = document.getElementById("down");
+                if ({{ c.across_down }}==1)
+                across_div.innerHTML = across_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}"+"<br>";
+                else
+                down_div.innerHTML = down_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}"+"<br>";
 
-{% endfor %}
-
-  });
 
 
-  </script>
+            {% endfor %}
+
+        });
+    function clear_global(){
+        localStorage.removeItem("acr");
+        localStorage.removeItem("dow");
+        return true;
+    }
+
+    </script>
 
 </head>
 <body class="body" style="background-color:#ccc">
-
-    <div id="abc" class="container" ></div>
-    <div id="modal_container"></div>
-    <form  action='/finish' method='post'>
-      <button type='submit' class='btn btn-primary'id='finish_button'>Finish</button>
-    </form>
+<div class="row">
+    <div class="col-md-3 clue" id="across"><h3>ACROSS</h3></div>
+    <div id="abc" class="container col-md-6"></div>
+    <div class="col-md-3 clue" id="down"><h3>DOWN</h3></div>
+</div>
+<div id="modal_container"></div>
+<form action='/finish' method='post'>
+    <button type='submit' class='btn btn-primary' id='finish_button'>Finish</button>
+</form>
+<a class="btn btn-primary" id="new_button" href="{% url 'new_crossword' %}" onclick="return clear_global()">Reset</a>
 
 </body>
 </html>

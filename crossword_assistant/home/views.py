@@ -97,3 +97,7 @@ def solve(request):
 		clue.list_flag = 1
 		clue.save()
 	return HttpResponseRedirect('/finish')
+
+def empty_table(request):
+	Clue.objects.all().delete()
+	return HttpResponseRedirect('/')
