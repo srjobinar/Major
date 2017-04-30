@@ -140,9 +140,7 @@
             <span aria-hidden='true'>&times;</span>
             <span class='sr-only'>Close</span>
             </button>
-            <h4 class='modal-title' id='myModalLabel'>
-
-            </h4>
+            <h4 class='modal-title' id='myModalLabel'></h4>
             </div>
 
             <!-- Modal Body -->
@@ -259,9 +257,9 @@
           typ = "Across";
       else
           typ="Down";
-      $("#myModalLabel").text(""+"{{ d.clue_number }}"+". "+typ+" : "+"{{ d.clue }}"+"("+"{{ d.answer_length }}"+")");
+      $("#m"+{{d.clue_number}}+t+" h4[class='modal-title']").text(""+"{{ d.clue_number }}"+". "+typ+" : "+"{{ d.clue }}"+"("+"{{ d.answer_length }}"+")");
       console.log($("#myModalLabel"));
-
+      //$("#m"+{{d.clue_number}}+t+" input.hidden[name='answer']").focus();
       //console.log(v.val());
 
 
@@ -345,8 +343,9 @@
       }
       else{
         $("#m"+{{d.clue_number}}+t+" .solve").hide();
+        var f=0;
         {% for ans in d.ans_list %}
-          var flag=0;
+          var flag=0,k=0;
           var str2=""+"{{ans}}";
           if(str2.length==s.length)
           {
@@ -358,13 +357,16 @@
             if(i==str2.length)
               flag=1;
           }
-          if (flag==1)
+          if (flag==1&&f<=49)
           {
+           // if (k>=49)
+             //     break;
           $("#m"+{{d.clue_number}}+t+" select").append($('<option>', {
               value: "{{ans}}",
               text: '{{ans}}'
           }));
-        }
+          f++;
+          }
         {% endfor%}
       }
 
@@ -404,7 +406,19 @@
     <div class="col-md-3 clue" id="down"><h3>DOWN</h3></div>
 </div>
 <div id="modal_container"></div>
-<a class="btn btn-primary" id="new_button" href="{% url 'new_crossword' %} onclick="return clear_global()">Reset</a>
+<a class="btn btn-primary" id="new_button" href="{% url 'new_crossword' %} " onclick="myFunction()">Reset</a>
+
+<script>
+function myFunction() {
+
+    if (confirm('Are you sure?')) {
+        return clear_global();
+
+} else {
+    // Do nothing!
+}
+}
+</script>
 
 </body>
 </html>
