@@ -112,12 +112,13 @@
 <form action='/finish' method='post'>
     <button type='submit' class='btn btn-primary' id='finish_button'>Finish</button>
 </form>
-<a class="btn btn-primary" id="new_button" href="{% url 'new_crossword' %} " onclick="myFunction()">Reset</a>
+<button class="btn btn-primary" id="new_button" onclick="myFunction()">Reset</a>
 
 <script>
 function myFunction() {
 
     if (confirm('Are you sure?')) {
+        window.open("{% url 'new_crossword' %}");
         return clear_global();
 
 } else {
