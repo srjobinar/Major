@@ -89,9 +89,15 @@ $(document).ready(function() {
   var i,j;
   var dow=localStorage.getItem("dow");
   var acr=localStorage.getItem("acr");
+  var acr_key=localStorage.getItem("acr_key");
+  var dow_key=localStorage.getItem("dow_key");
   acr+=".";
   dow+="."
+  acr_key+=".";
+  dow_key+=".";
   localStorage.setItem("acr",acr);
+  localStorage.setItem("acr_key",acr_key);
+  localStorage.setItem("dow_key",dow_key);
   localStorage.setItem("dow",dow);
   //document.write("<br>");
   for(i=0;i<16;i++)
@@ -125,6 +131,7 @@ $(document).ready(function() {
 
       var yo=$.parseHTML("<div class='isa_error'><i class='fa fa-times-circle'></i>Clue length is out of bounds.</div>");
       var yo1=$.parseHTML("<div class='isa_error cluenum'><i class='fa fa-times-circle'></i>Identical clue already exists.</div>");
+      var yo2=$.parseHTML("<div class='isa_error cluenum1'><i class='fa fa-times-circle'></i>Clue overlaps with existing clue.</div>");
       var selection = undefined;
       var ACROSS = 1;
       var DOWN = 2;
@@ -142,12 +149,23 @@ $(document).ready(function() {
 
       }
 
+      function show_err2(){
+
+        $(".in").find("input.textbox").parent().append(yo2);
+        $(':input[type="submit"]').prop('disabled', true);
+
+      }
+
       function hide_err(){
         $(".in").find(".isa_error").remove();
         $(':input[type="submit"]').prop('disabled', false);
       }
       function hide_err1(){
         $(".in").find(".cluenum").remove();
+        $(':input[type="submit"]').prop('disabled', false);
+      }
+        function hide_err2(){
+        $(".in").find(".cluenum1").remove();
         $(':input[type="submit"]').prop('disabled', false);
       }
 
@@ -160,7 +178,9 @@ $(document).ready(function() {
                 hide_err();
         }
       }
+      
       function checkAcrossClue(){
+        console.log("called checacrossclue");
         var clu = $(".in").find("input.clue1").val();
               acr=localStorage.getItem("acr");
               if (acr.indexOf("."+clu+".") >= 0){
@@ -170,6 +190,78 @@ $(document).ready(function() {
               else{
                 hide_err1();
 
+            }
+      } 
+
+      function checkAcrossKey(){
+        var len = $(".in").find("input.textbox").val();
+              acr_key=localStorage.getItem("acr_key");
+              var g=0;
+              while(g<len)
+              {
+              if (acr_key.indexOf("."+(Number(myk)+g)+".") >= 0){
+                show_err2();
+                break;
+
+              }
+              else{
+                hide_err2();
+              }
+              g++;
+            }
+      }
+
+      function checkDownKey(){
+        console.log("called checkdownkey");
+        var len = $(".in").find("input.textbox").val();
+        dow_key=localStorage.getItem("dow_key");
+              var g=0;
+              console.log(len+"  "+dow_key+"  "+myk);
+              while(g<len)
+              {
+                console.log(Number(myk)+g);
+              if (dow_key.indexOf("."+(Number(myk)+g*100)+".") >= 0){
+                show_err2();
+                break;
+
+              }
+              else{
+                hide_err2();
+              }
+              g++;
+            }
+      }
+
+      function setDownKey(){
+        var len = $(".in").find("input.textbox").val();
+              dow_key=localStorage.getItem("dow_key");
+              var g=0;
+              while(g<len)
+              {
+              if (dow_key.indexOf("."+(Number(myk)+g*100)+".") >= 0){
+
+              }
+              else{
+                dow_key+=((Number(myk)+g*100)+".");
+              localStorage.setItem("dow_key",dow_key);
+              }
+              g++;
+            }
+      }
+      function setAcrossKey(){
+        var len = $(".in").find("input.textbox").val();
+              acr_key=localStorage.getItem("acr_key");
+              var g=0;
+              while(g<len)
+              {
+              if (acr_key.indexOf("."+(Number(myk)+g)+".") >= 0){
+
+              }
+              else{
+                acr_key+=((Number(myk)+g)+".");
+              localStorage.setItem("acr_key",acr_key);
+              }
+              g++;
             }
       }
       function setAcrossClue(){
@@ -219,13 +311,14 @@ $(document).ready(function() {
       }
 
 
+
         $html.find("input.textbox").change(function(){
           console.log("On Change for "+selection);
           //error check
           switch(selection){
             case undefined: return;break;
-            case ACROSS : checkAcross();break;
-            case DOWN: checkDown();break;
+            case ACROSS : checkAcross();checkAcrossKey();break;
+            case DOWN: checkDown();checkDownKey();break;
           }
 
         });
@@ -243,8 +336,8 @@ $(document).ready(function() {
           //error check
           switch(selection){
             case undefined: return;break;
-            case ACROSS : setAcrossClue();break;
-            case DOWN: setDownClue();break;
+            case ACROSS : setAcrossClue();setAcrossKey();break;
+            case DOWN: setDownClue();setDownKey();break;
           }
 
         });
@@ -253,8 +346,9 @@ $(document).ready(function() {
               selection = ACROSS;
               checkAcross();
               checkAcrossClue();
+              checkAcrossKey();
 
-              console.log(acr);
+              console.log(acr);console.log(acr_key);
 
         });
       
@@ -263,7 +357,9 @@ $(document).ready(function() {
           selection = DOWN;
           checkDown();
           checkDownClue();
-          console.log(dow);
+          console.log("checkDownkey to call");
+          checkDownKey();
+          console.log(dow);console.log(dow_key);
 
          
         });
