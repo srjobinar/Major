@@ -3,7 +3,7 @@ from nltk.corpus import wordnet as wn, stopwords
 from nltk.tokenize import word_tokenize
 
 
-def noun_fn(sent, k):
+def noun_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -28,7 +28,7 @@ def noun_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_noun = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.NOUN)):
@@ -64,12 +64,21 @@ def noun_fn(sent, k):
     for w in lesk:
         if not (w in output_noun):
             output_noun[w] = 0
-        output_lesk[w] += output_noun[w]
+        output_lesk[w] = output_noun[w]*0.25+output_lesk[w]*0.75
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
 
 
-def verb_fn(sent, k):
+def verb_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -94,7 +103,7 @@ def verb_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_verb = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.VERB)):
@@ -130,13 +139,23 @@ def verb_fn(sent, k):
     for w in lesk:
         if not (w in output_verb):
             output_verb[w] = 0
-        output_lesk[w] += output_verb[w]
+        output_lesk[w] = output_verb[w]*0.25+output_lesk[w]*0.75
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
+
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
 
 
 
-def adj_fn(sent, k):
+def adj_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -161,7 +180,7 @@ def adj_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_adj = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.ADJ)):
@@ -198,10 +217,22 @@ def adj_fn(sent, k):
     for w in lesk:
         if not (w in output_adj):
             output_adj[w] = 0
-        output_lesk[w] += output_adj[w]
+        output_lesk[w] = output_adj[w]*0.25+output_lesk[w]*0.75
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
-def dont_know_fn(sent, k):
+
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
+
+
+def dont_know_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -238,7 +269,8 @@ def dont_know_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+            #print("hello")
             sim_verb = 0
             sim_noun = 0
             sim_adj = 0
@@ -275,6 +307,8 @@ def dont_know_fn(sent, k):
                 output_verb[word] = sim_verb
             if sim_noun > 0:
                 output_noun[word] = sim_noun
+            if sim_adj > 0:
+                output_adj[word] = sim_adj
 
     verbs = sorted(output_verb, key=output_verb.__getitem__, reverse=True)
     nouns = sorted(output_noun, key=output_noun.__getitem__, reverse=True)
@@ -304,25 +338,29 @@ def dont_know_fn(sent, k):
     for key, value in output_adj.items():
         output_adj[key] = value / max_adjs
 
-    #tot_rank = dict(output_verb, **output_noun)
+    #tot_rank1 = dict(output_verb, **output_noun)
     tot_rank1 = {k: max(i for i in (output_verb.get(k), output_noun.get(k)) if i) for k in
                 output_verb.keys() | output_noun}
 
+    #tot_rank = dict(tot_rank1, **output_adj)
     tot_rank = {k: max(i for i in (tot_rank1.get(k), output_adj.get(k)) if i) for k in
                 tot_rank1.keys() | output_adj}
 
     for w in lesk:
         if not (w in tot_rank):
             tot_rank[w] = 0
-        tot_rank[w] += output_lesk[w]
+        tot_rank[w] = tot_rank[w]*0.25+output_lesk[w]*0.75
 
     rank = list(sorted(tot_rank, key=tot_rank.__getitem__, reverse=True))
 
-    flag = 0
-    # for w in rank:
-    #    flag = flag + 1
-    #   if flag > 50:
-    #      break
-    # print(w,tot_rank[w])
-    # print(rank[:300])
-    return rank[:1000]
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    
+    return rank1[:1000]

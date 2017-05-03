@@ -55,6 +55,10 @@
             margin-left: 35%;
             margin-top: -58px;
         }
+        .len
+        {
+          display: none;
+        }
     </style>
     <script src="{% static 'home/js/jquery.min.js' %}"></script>
     <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
@@ -62,6 +66,8 @@
 
     <script type="text/javascript">
         $(function () {
+
+            $(".len").css("display","none");
             {% for c in data %}
 
                 var k, across_div, down_div;
@@ -75,7 +81,7 @@
                     $cell = $("#" + cell);
                     //console.log($cell);
                     //console.log($("#"+cell).css("background-color"));
-                    $("#" + cell).css("background-color", "#fff")
+                    $("#" + cell).css("background-color", "#fff");
                     cell = cell + k;
                     //console.log(cell);
 

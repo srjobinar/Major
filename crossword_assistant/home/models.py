@@ -15,3 +15,4 @@ class Clue(models.Model):
     verb_noun = models.PositiveIntegerField(default=1)
     ans_list = models.CharField(max_length=62000, default="")
     list_flag = models.PositiveIntegerField(default=0)
+    compound_flag = models.PositiveIntegerField(default=0)

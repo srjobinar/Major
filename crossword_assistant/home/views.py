@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from .models import Clue
 from . import find_ans
+from . import find_ans_com
 import json
 
 def index(request):
@@ -20,8 +21,13 @@ def clueinput(request):
 		length = request.POST['length']
 		direct = request.POST['type']
 		cell_num = request.POST['cell_num']
+		sing_comp = request.POST['word_type']
 		v_n = request.POST['answer_type']
-		query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num,verb_noun=v_n)
+		if sing_comp == 0:
+			query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num,verb_noun=v_n)
+		else:
+			comp = request.POST['length2']
+			query = Clue(clue = clue , clue_number = clueno , answer_length = int(length)+int(comp) , across_down = direct, cell_number = cell_num,verb_noun=v_n, compound_flag = comp)
 		query.save()
 	return HttpResponseRedirect("/")
 
@@ -86,14 +92,24 @@ def solve(request):
 		else:
 			a_d = 0
 		clue = Clue.objects.all().filter(clue_number = clue_num,across_down = a_d)[0]
-		if clue.verb_noun == 1:
-			a = find_ans.noun_fn(str(clue.clue),int(clue.answer_length))
-		elif clue.verb_noun == 2:
-			a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
-		elif clue.verb_noun == 3:
-			a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))	
+		if clue.compound_flag == 0:
+			if clue.verb_noun == 1:
+				a = find_ans.noun_fn(str(clue.clue),int(clue.answer_length))
+			elif clue.verb_noun == 2:
+				a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
+			elif clue.verb_noun == 3:
+				a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))	
+			else:
+				a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
 		else:
-			a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
+			if clue.verb_noun == 1:
+				a = find_ans_com.noun_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
+			elif clue.verb_noun == 2:
+				a = find_ans_com.verb_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
+			elif clue.verb_noun == 3:
+				a = find_ans_com.adj_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))	
+			else:
+				a = find_ans_com.dont_know_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
 		data = json.dumps(a)
 		clue.ans_list = data
 		clue.list_flag = 1
