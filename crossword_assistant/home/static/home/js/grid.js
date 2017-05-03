@@ -56,7 +56,7 @@ str =  `<div class='modal-dialog'>
                     </div>
                     <div class='col-sm-5 len'  >
                         <input id='clue_len2' min=1 type='number' step=1 name='length2' class='form-control textbox1'
-                            required/>
+                            />
                     </div>
                   </div>
                   <div class='form-group'>

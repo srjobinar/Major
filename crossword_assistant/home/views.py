@@ -23,10 +23,10 @@ def clueinput(request):
 		cell_num = request.POST['cell_num']
 		sing_comp = request.POST['word_type']
 		v_n = request.POST['answer_type']
-		if sing_comp == 0:
+		if int(sing_comp) == 0:
 			query = Clue(clue = clue , clue_number = clueno , answer_length = length , across_down = direct, cell_number = cell_num,verb_noun=v_n)
-		else:
-			comp = request.POST['length2']
+		elif int(sing_comp) !=0:
+			comp =  request.POST['length2']
 			query = Clue(clue = clue , clue_number = clueno , answer_length = int(length)+int(comp) , across_down = direct, cell_number = cell_num,verb_noun=v_n, compound_flag = comp)
 		query.save()
 	return HttpResponseRedirect("/")

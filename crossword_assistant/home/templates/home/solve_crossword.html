@@ -415,7 +415,7 @@
 function myFunction() {
 
     if (confirm('Are you sure?')) {
-        window.open("{% url 'new_crossword' %}");
+        window.open("{% url 'new_crossword' %}",_self);
         return clear_global();
 
 } else {
