@@ -90,6 +90,8 @@ def solve(request):
 			a = find_ans.noun_fn(str(clue.clue),int(clue.answer_length))
 		elif clue.verb_noun == 2:
 			a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
+		elif clue.verb_noun == 3:
+			a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))	
 		else:
 			a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
 		data = json.dumps(a)
