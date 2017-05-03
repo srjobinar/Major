@@ -219,9 +219,15 @@ def dont_know_fn(sent, k):
     for i, val in enumerate(text_words):
         syn_noun.extend(wn.synsets(val, pos=wn.NOUN))
 
+    syn_adj = []
+    for i, val in enumerate(text_words):
+        syn_adj.extend(wn.synsets(val, pos=wn.ADJ))
+
+
     flag = 0
     output_verb = {}
     output_noun = {}
+    output_adj = {}
     output_lesk = {}
     context_words = []
 
@@ -235,6 +241,7 @@ def dont_know_fn(sent, k):
         if len(word) == k and word.isalpha():
             sim_verb = 0
             sim_noun = 0
+            sim_adj = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.VERB)):
                 temp = 0
@@ -246,6 +253,12 @@ def dont_know_fn(sent, k):
                 for i, val in enumerate(syn_noun):
                     temp = temp + synset.path_similarity(val)
                 sim_noun = max(temp, sim_noun)
+            for synset in list(wn.synsets(word, pos=wn.ADJ)):
+                temp = 0
+                for i, val in enumerate(syn_adj):
+                    if synset.path_similarity(val):
+                        temp = temp + synset.path_similarity(val)
+                sim_adj = max(temp, sim_adj)
             for synset in list(wn.synsets(word)):
                 def_words = word_tokenize(synset.definition())
                 def_words = list(set(def_words) - set(stop_words))
@@ -265,6 +278,7 @@ def dont_know_fn(sent, k):
 
     verbs = sorted(output_verb, key=output_verb.__getitem__, reverse=True)
     nouns = sorted(output_noun, key=output_noun.__getitem__, reverse=True)
+    adjs = sorted(output_adj, key=output_adj.__getitem__, reverse=True)
     lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse=True)
     max_verbs = 0
     for w in verbs:
@@ -281,6 +295,14 @@ def dont_know_fn(sent, k):
 
     for key, value in output_noun.items():
         output_noun[key] = value / max_nouns
+
+    max_adjs = 0
+    for w in adjs:
+        if output_adj[w] > max_adjs:
+            max_adjs = output_adj[w]
+
+    for key, value in output_adj.items():
+        output_adj[key] = value / max_adjs
 
     tot_rank = dict(output_verb, **output_noun)
     tot_rank = {k: max(i for i in (output_verb.get(k), output_noun.get(k)) if i) for k in
