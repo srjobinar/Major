@@ -92,6 +92,11 @@ str =  `<div class='modal-dialog'>
                       </div>
                       <div class='radio'>
                         <label>
+                            <input type='radio' value='4' name='answer_type'/> Adverb
+                        </label>
+                      </div>
+                      <div class='radio'>
+                        <label>
                             <input type='radio' value='0' name='answer_type'/> No Idea
                         </label>
                       </div>

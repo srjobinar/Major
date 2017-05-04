@@ -98,7 +98,9 @@ def solve(request):
 			elif clue.verb_noun == 2:
 				a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
 			elif clue.verb_noun == 3:
-				a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))	
+				a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))
+			elif clue.verb_noun == 4:
+				a = find_ans.adv_fn(str(clue.clue),int(clue.answer_length))		
 			else:
 				a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
 		else:
@@ -108,6 +110,8 @@ def solve(request):
 				a = find_ans_com.verb_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
 			elif clue.verb_noun == 3:
 				a = find_ans_com.adj_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))	
+			elif clue.verb_noun == 4:
+				a = find_ans_com.adv_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))	
 			else:
 				a = find_ans_com.dont_know_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
 		data = json.dumps(a)
@@ -119,3 +123,35 @@ def solve(request):
 def empty_table(request):
 	Clue.objects.all().delete()
 	return HttpResponseRedirect('/')
+
+def solve_all(request):
+	data = Clue.objects.all()
+	for clue in data:
+		if clue.list_flag == 0:
+			if clue.compound_flag == 0:
+				if clue.verb_noun == 1:
+					a = find_ans.noun_fn(str(clue.clue),int(clue.answer_length))
+				elif clue.verb_noun == 2:
+					a = find_ans.verb_fn(str(clue.clue),int(clue.answer_length))
+				elif clue.verb_noun == 3:
+					a = find_ans.adj_fn(str(clue.clue),int(clue.answer_length))
+				elif clue.verb_noun == 4:
+					a = find_ans.adv_fn(str(clue.clue),int(clue.answer_length))		
+				else:
+					a = find_ans.dont_know_fn(str(clue.clue),int(clue.answer_length))
+			else:
+				if clue.verb_noun == 1:
+					a = find_ans_com.noun_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
+				elif clue.verb_noun == 2:
+					a = find_ans_com.verb_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
+				elif clue.verb_noun == 3:
+					a = find_ans_com.adj_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))	
+				elif clue.verb_noun == 4:
+					a = find_ans_com.adv_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))	
+				else:
+					a = find_ans_com.dont_know_fn(str(clue.clue),int(clue.answer_length)-int(clue.compound_flag),int(clue.compound_flag))
+			data = json.dumps(a)
+			clue.ans_list = data
+			clue.list_flag = 1
+			clue.save()
+	return HttpResponseRedirect('/finish')

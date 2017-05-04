@@ -201,6 +201,73 @@ def adj_fn(sent, k):
         output_lesk[w] += output_adj[w]
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
     return rank[:1000]
+
+def adv_fn(sent, k):
+    text_words = word_tokenize(sent)
+    stop_words = set(stopwords.words("english"))
+    temp_words = list(set(text_words) - set(stop_words))
+    if len(temp_words) != 0:
+        text_words = temp_words
+    syn = []
+    syn_adv = []
+    for i, val in enumerate(text_words):
+        syn_adv.extend(wn.synsets(val, pos=wn.ADV))
+
+    for i, val in enumerate(text_words):
+        syn.extend(wn.synsets(val))
+
+    output_lesk = {}
+    output_adv = {}
+    context_words = []
+
+    for i, val in enumerate(syn):
+        words = word_tokenize(val.definition())
+        context_words.extend(words)
+
+    context_words = list(set(context_words) - set(stop_words))
+
+    for word in list(wn.all_lemma_names(pos=wn.ADV,lang='eng')):
+        if len(word) == k and word.isalpha():
+            sim_adv = 0
+            sim = 0
+            for synset in list(wn.synsets(word, pos=wn.ADV)):
+                temp = 0
+                for i, val in enumerate(syn_adv):
+                    if synset.path_similarity(val):
+                        temp = temp + synset.path_similarity(val)
+                sim_adv = max(temp, sim_adv)
+
+            for synset in list(wn.synsets(word)):
+                def_words = word_tokenize(synset.definition())
+                def_words = list(set(def_words) - set(stop_words))
+                temp1 = set(text_words).intersection(def_words)
+                temp2 = set(context_words).intersection(def_words)
+                temp1 = len(temp1) / len(text_words)
+                temp2 = len(temp2) / len(context_words)
+                t = 0.75 * temp1 + 0.25 * temp2
+                sim = max(t, sim)
+            if sim > 0:
+                output_lesk[word] = sim
+            if sim_adv > 0:
+                output_adv[word] = sim_adv
+    advs = sorted(output_adv, key=output_adv.__getitem__, reverse=True)
+    lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse=True)
+
+    max_advs = 0
+    for w in advs:
+        if output_adv[w] > max_advs:
+            max_advs = output_adv[w]
+
+    for key, value in output_adv.items():
+        output_adv[key] = value / max_advs
+
+    for w in lesk:
+        if not (w in output_adv):
+            output_adv[w] = 0
+        output_lesk[w] += output_adv[w]
+    rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
+    return rank[:1000]
+
 def dont_know_fn(sent, k):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
@@ -223,11 +290,16 @@ def dont_know_fn(sent, k):
     for i, val in enumerate(text_words):
         syn_adj.extend(wn.synsets(val, pos=wn.ADJ))
 
+    syn_adv = []
+    for i, val in enumerate(text_words):
+        syn_adv.extend(wn.synsets(val, pos=wn.ADV))
+
 
     flag = 0
     output_verb = {}
     output_noun = {}
     output_adj = {}
+    output_adv = {}
     output_lesk = {}
     context_words = []
 
@@ -242,6 +314,7 @@ def dont_know_fn(sent, k):
             sim_verb = 0
             sim_noun = 0
             sim_adj = 0
+            sim_adv = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.VERB)):
                 temp = 0
@@ -259,6 +332,12 @@ def dont_know_fn(sent, k):
                     if synset.path_similarity(val):
                         temp = temp + synset.path_similarity(val)
                 sim_adj = max(temp, sim_adj)
+            for synset in list(wn.synsets(word, pos=wn.ADV)):
+                temp = 0
+                for i, val in enumerate(syn_adv):
+                    if synset.path_similarity(val):
+                        temp = temp + synset.path_similarity(val)
+                sim_adv = max(temp, sim_adv)
             for synset in list(wn.synsets(word)):
                 def_words = word_tokenize(synset.definition())
                 def_words = list(set(def_words) - set(stop_words))
@@ -275,11 +354,17 @@ def dont_know_fn(sent, k):
                 output_verb[word] = sim_verb
             if sim_noun > 0:
                 output_noun[word] = sim_noun
+            if sim_adj > 0:
+                output_adj[word] = sim_adj
+            if sim_adv > 0:
+                output_adv[word] = sim_adv
 
     verbs = sorted(output_verb, key=output_verb.__getitem__, reverse=True)
     nouns = sorted(output_noun, key=output_noun.__getitem__, reverse=True)
     adjs = sorted(output_adj, key=output_adj.__getitem__, reverse=True)
+    advs = sorted(output_adv, key=output_adv.__getitem__, reverse=True)
     lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse=True)
+
     max_verbs = 0
     for w in verbs:
         if output_verb[w] > max_verbs:
@@ -304,12 +389,23 @@ def dont_know_fn(sent, k):
     for key, value in output_adj.items():
         output_adj[key] = value / max_adjs
 
+    max_advs = 0
+    for w in advs:
+        if output_adv[w] > max_advs:
+            max_advs = output_adv[w]
+
+    for key, value in output_adv.items():
+        output_adv[key] = value / max_advs
+
     #tot_rank = dict(output_verb, **output_noun)
     tot_rank1 = {k: max(i for i in (output_verb.get(k), output_noun.get(k)) if i) for k in
                 output_verb.keys() | output_noun}
 
-    tot_rank = {k: max(i for i in (tot_rank1.get(k), output_adj.get(k)) if i) for k in
+    tot_rank2 = {k: max(i for i in (tot_rank1.get(k), output_adj.get(k)) if i) for k in
                 tot_rank1.keys() | output_adj}
+
+    tot_rank = {k: max(i for i in (tot_rank2.get(k), output_adv.get(k)) if i) for k in
+                tot_rank2.keys() | output_adv}
 
     for w in lesk:
         if not (w in tot_rank):

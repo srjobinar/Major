@@ -409,13 +409,14 @@
     <div class="col-md-3 clue" id="down"><h3>DOWN</h3></div>
 </div>
 <div id="modal_container"></div>
-<button class="btn btn-primary" id="new_button" onclick="myFunction()">Reset</a>
+<button class="btn btn-primary" id="new_button" onclick="myFunction()">Reset</button>
+<a href="{% url 'solve_all' %}" class="btn btn-primary">Solve all</a>
 
 <script>
 function myFunction() {
 
     if (confirm('Are you sure?')) {
-        window.open("{% url 'new_crossword' %}",_self);
+        window.open("{% url 'new_crossword' %}");
         return clear_global();
 
 } else {
