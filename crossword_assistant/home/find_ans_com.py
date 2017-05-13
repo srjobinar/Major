@@ -28,7 +28,7 @@ def noun_fn(sent,a,b):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_noun = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.NOUN)):
@@ -103,7 +103,7 @@ def verb_fn(sent,a,b):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_verb = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.VERB)):
@@ -180,7 +180,7 @@ def adj_fn(sent,a,b):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_adj = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.ADJ)):
@@ -256,7 +256,7 @@ def adv_fn(sent,a,b):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_adv = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.ADV)):
@@ -349,7 +349,7 @@ def dont_know_fn(sent,a,b):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if (len(word)== a+b) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             #print("hello")
             sim_verb = 0
             sim_noun = 0
