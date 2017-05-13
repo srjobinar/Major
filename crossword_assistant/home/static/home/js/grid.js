@@ -18,14 +18,6 @@ str =  `<div class='modal-dialog'>
                 <form class='form-horizontal comp' role='form' action='/clue' method='post'>
                   <input class="hidden" type="hidden" name="cell_num" value="0">
                   <div class='form-group'>
-                    <label  class='col-sm-2 control-label'
-                              for='clue'>Clue</label>
-                    <div class='col-sm-10'>
-                        <input type='text' name='clue' class='form-control'
-                        id='clue' required/>
-                    </div>
-                  </div>
-                  <div class='form-group'>
                     <label class='col-sm-2 control-label'
                           for='clueno' >Clue No</label>
                     <div class='col-sm-10'>
@@ -34,11 +26,37 @@ str =  `<div class='modal-dialog'>
                     </div>
                   </div>
                   <div class='form-group'>
+                    <label  class='col-sm-2 control-label'
+                              for='clue'>Clue</label>
+                    <div class='col-sm-10'>
+                        <input type='text' name='clue' class='form-control'
+                        id='clue' required/>
+                    </div>
+                  </div>
+                  <div class='form-group'>
+                    <div class='col-sm-offset-2 col-sm-10'>
+                      <div class='radio'>
+                        <label>
+                            <input type='radio' value='0' name='word_type' required checked='checked'/> Single
+                        </label>
+                      </div>
+                      <div class='radio'>
+                        <label>
+                            <input type='radio' value='1' name='word_type'/> Compound
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='form-group'>
                     <label class='col-sm-2 control-label'
                           for='length' >Length</label>
-                    <div class='col-sm-10'>
+                    <div class='col-sm-5'>
                         <input id='clue_len' min=1 type='number' step=1 name='length' class='form-control textbox'
                             required/>
+                    </div>
+                    <div class='col-sm-5 len'  >
+                        <input id='clue_len2' min=1 type='number' step=1 name='length2' class='form-control textbox1'
+                            />
                     </div>
                   </div>
                   <div class='form-group'>
@@ -74,6 +92,11 @@ str =  `<div class='modal-dialog'>
                       </div>
                       <div class='radio'>
                         <label>
+                            <input type='radio' value='4' name='answer_type'/> Adverb
+                        </label>
+                      </div>
+                      <div class='radio'>
+                        <label>
                             <input type='radio' value='0' name='answer_type'/> No Idea
                         </label>
                       </div>
@@ -104,6 +127,7 @@ $(document).ready(function() {
   localStorage.setItem("acr_key",acr_key);
   localStorage.setItem("dow_key",dow_key);
   localStorage.setItem("dow",dow);
+
   //document.write("<br>");
   for(i=0;i<16;i++)
   {
@@ -128,9 +152,12 @@ $(document).ready(function() {
      $("#"+k).attr('data-toggle',"modal");
      $("#m"+k).attr('tabindex',"-1");
      $("#m"+k).attr('role',"dialog");
-
      html = $.parseHTML(str);
      var $html=$(html);
+
+     $(".in").find("input.len_sen").hide();
+
+
 
  (function(myk){
 
@@ -316,17 +343,29 @@ $(document).ready(function() {
       }
 
 
+      $("input[type=radio][name=word_type]").change(function() {
+        if (this.value == '0') {
+            $(".len").css("display","none");
+            console.log('change');
+            
+        }
+        else if (this.value == '1') {
+            $(".len").css("display","block");
+            console.log('change');
+        }
+    });
 
-        $html.find("input.textbox").change(function(){
-          console.log("On Change for "+selection);
-          //error check
-          switch(selection){
-            case undefined: return;break;
-            case ACROSS : checkAcross();checkAcrossKey();break;
-            case DOWN: checkDown();checkDownKey();break;
-          }
 
-        });
+        // $html.find("input.textbox").change(function(){
+        //   console.log("On Change for "+selection);
+        //   //error check
+        //   switch(selection){
+        //     case undefined: return;break;
+        //     case ACROSS : checkAcross();checkAcrossKey();break;
+        //     case DOWN: checkDown();checkDownKey();break;
+        //   }
+
+        // });
 
         $html.find("input.clue1").change(function(){
           //error check

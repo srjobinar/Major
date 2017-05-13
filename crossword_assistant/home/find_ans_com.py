@@ -3,7 +3,7 @@ from nltk.corpus import wordnet as wn, stopwords
 from nltk.tokenize import word_tokenize
 
 
-def noun_fn(sent, k):
+def noun_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -28,7 +28,7 @@ def noun_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_noun = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.NOUN)):
@@ -66,10 +66,19 @@ def noun_fn(sent, k):
             output_noun[w] = 0
         output_lesk[w] += output_noun[w]
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
 
 
-def verb_fn(sent, k):
+def verb_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -94,7 +103,7 @@ def verb_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_verb = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.VERB)):
@@ -132,11 +141,21 @@ def verb_fn(sent, k):
             output_verb[w] = 0
         output_lesk[w] += output_verb[w]
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
+
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
 
 
 
-def adj_fn(sent, k):
+def adj_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -161,7 +180,7 @@ def adj_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_adj = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.ADJ)):
@@ -200,9 +219,19 @@ def adj_fn(sent, k):
             output_adj[w] = 0
         output_lesk[w] += output_adj[w]
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
 
-def adv_fn(sent, k):
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
+
+def adv_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -226,8 +255,8 @@ def adv_fn(sent, k):
 
     context_words = list(set(context_words) - set(stop_words))
 
-    for word in list(wn.all_lemma_names(pos=wn.ADV,lang='eng')):
-        if len(word) == k and word.isalpha():
+    for word in list(wn.all_lemma_names(lang='eng')):
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
             sim_adv = 0
             sim = 0
             for synset in list(wn.synsets(word, pos=wn.ADV)):
@@ -266,9 +295,19 @@ def adv_fn(sent, k):
             output_adv[w] = 0
         output_lesk[w] += output_adv[w]
     rank = list(sorted(output_lesk, key=output_lesk.__getitem__, reverse=True))
-    return rank[:1000]
 
-def dont_know_fn(sent, k):
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    return rank1[:1000]
+
+def dont_know_fn(sent,a,b):
     text_words = word_tokenize(sent)
     stop_words = set(stopwords.words("english"))
     temp_words = list(set(text_words) - set(stop_words))
@@ -310,7 +349,8 @@ def dont_know_fn(sent, k):
     context_words = list(set(context_words) - set(stop_words))
 
     for word in list(wn.all_lemma_names(lang='eng')):
-        if len(word) == k and word.isalpha():
+        if (len(word)== a+b and word.isalpha()) or (len(word) == a+b+1 and (word[a] == '-' or word[a] == '_') and word[0:a].isalpha() and word[a+1:a+b+1].isalpha()):
+            #print("hello")
             sim_verb = 0
             sim_noun = 0
             sim_adj = 0
@@ -357,14 +397,13 @@ def dont_know_fn(sent, k):
             if sim_adj > 0:
                 output_adj[word] = sim_adj
             if sim_adv > 0:
-                output_adv[word] = sim_adv
+                output_adj[word] = sim_adv
 
     verbs = sorted(output_verb, key=output_verb.__getitem__, reverse=True)
     nouns = sorted(output_noun, key=output_noun.__getitem__, reverse=True)
     adjs = sorted(output_adj, key=output_adj.__getitem__, reverse=True)
     advs = sorted(output_adv, key=output_adv.__getitem__, reverse=True)
     lesk = sorted(output_lesk, key=output_lesk.__getitem__, reverse=True)
-
     max_verbs = 0
     for w in verbs:
         if output_verb[w] > max_verbs:
@@ -397,10 +436,11 @@ def dont_know_fn(sent, k):
     for key, value in output_adv.items():
         output_adv[key] = value / max_advs
 
-    #tot_rank = dict(output_verb, **output_noun)
+    #tot_rank1 = dict(output_verb, **output_noun)
     tot_rank1 = {k: max(i for i in (output_verb.get(k), output_noun.get(k)) if i) for k in
                 output_verb.keys() | output_noun}
 
+    #tot_rank = dict(tot_rank1, **output_adj)
     tot_rank2 = {k: max(i for i in (tot_rank1.get(k), output_adj.get(k)) if i) for k in
                 tot_rank1.keys() | output_adj}
 
@@ -414,11 +454,14 @@ def dont_know_fn(sent, k):
 
     rank = list(sorted(tot_rank, key=tot_rank.__getitem__, reverse=True))
 
-    flag = 0
-    # for w in rank:
-    #    flag = flag + 1
-    #   if flag > 50:
-    #      break
-    # print(w,tot_rank[w])
-    # print(rank[:300])
-    return rank[:1000]
+    final_rank=[]
+
+    for w in rank:
+        if w[a]=='_' or w[a]=='-':
+            p=w[:a]+w[a+1:];
+            final_rank.append(p);
+            rank.remove(w);
+        
+    rank1= final_rank + rank;
+    
+    return rank1[:1000]

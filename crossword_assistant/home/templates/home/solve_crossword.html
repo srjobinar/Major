@@ -61,6 +61,7 @@
             text-align: justify;
             padding-top: 150px;
         }
+        
     </style>
     <script src="{% static 'home/js/jquery.min.js' %}"></script>
     <script src="{% static 'home/js/bootstrap.min.js' %}"></script>
@@ -112,9 +113,9 @@
                 across_div = document.getElementById("across");
                 down_div = document.getElementById("down");
                 if ({{ c.across_down }}==1)
-                across_div.innerHTML = across_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}" + "<br>";
+                across_div.innerHTML = across_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}" +"  ({{c.answer_length}})"+ "<br>";
                 else
-                down_div.innerHTML = down_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}" + "<br>";
+                down_div.innerHTML = down_div.innerHTML + "{{ c.clue_number }}" + ".  {{ c.clue }}" +"  ({{c.answer_length}})"+ "<br>";
 
 
 
@@ -408,7 +409,8 @@
     <div class="col-md-3 clue" id="down"><h3>DOWN</h3></div>
 </div>
 <div id="modal_container"></div>
-<button class="btn btn-primary" id="new_button" onclick="myFunction()">Reset</a>
+<button class="btn btn-primary" id="new_button" onclick="myFunction()">Reset</button>
+<a href="{% url 'solve_all' %}" class="btn btn-primary">Solve all</a>
 
 <script>
 function myFunction() {

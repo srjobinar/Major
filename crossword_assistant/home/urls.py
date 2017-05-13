@@ -6,5 +6,6 @@ urlpatterns = [
       url(r'^finish$',views.finish,name='finish'),
       url(r'^answer$',views.answer,name='answer'),
       url(r'^solve$',views.solve,name='solve'),
-      url(r'^clear$',views.empty_table,name='new_crossword')
+      url(r'^clear$',views.empty_table,name='new_crossword'),
+      url(r'^solve_all$',views.solve_all,name='solve_all')
     ]
